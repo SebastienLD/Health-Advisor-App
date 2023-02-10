@@ -10,7 +10,7 @@ export type FoodItemType = {
     image: ImageSourcePropType
 }
 
-export type ComponentProps = {
+type ComponentProps = {
   foodItem: FoodItemType;
 }
 
