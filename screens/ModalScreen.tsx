@@ -143,7 +143,9 @@ export default function App() {
       foodContext.foodContextDispatch({type: FoodContextActionTypes.AddFood, payload: {
         name: json["foods"][0]["food_name"],
         brand: json["foods"][0]["brand_name"],
-        amount: `${json["foods"][0]["serving_qty"]} ${json["foods"][0]["serving_unit"]}`,
+        serving_qty: json["foods"][0]["serving_qty"],
+        serving_unit: json["foods"][0]["serving_unit"],
+        num_servings: 1,
         calories: json["foods"][0]["nf_calories"],
         image: require('../assets/images/TrailMix.jpeg'),
       }});

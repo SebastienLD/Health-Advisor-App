@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { StyleSheet, Image } from 'react-native';
+import { StyleSheet, Image, TextInput } from 'react-native';
 import { Text, View } from './Themed';
 import FoodItem, { FoodItemType } from './FoodItem';
 
@@ -46,26 +46,75 @@ type ComponentProps = {
 
 const ConfirmFood = (props: ComponentProps) => {
 	const { foodResponse, receivedResponse } = props;
-	const [servingQty, setServingQty] = useState<number>(foodResponse.serving_qty);
+	const [numServings, setNumServings] = useState<string>("1");
+
 	const [confirmedFoodItem, setConfirmedFoodItem] = useState<FoodItemType>({
 		name: foodResponse.food_name,
 		brand: foodResponse.brand_name,
-		amount: `${foodResponse.serving_qty} ${foodResponse.serving_unit}`,
+		serving_qty: foodResponse.serving_qty,
+		serving_unit: foodResponse.serving_unit,
+		num_servings: 1,
 		calories: foodResponse.nf_calories,
 		image: {uri: foodResponse.photo.thumb},
+		protein: foodResponse.nf_protein,
+		fat: foodResponse.nf_total_fat,
+		carbs: foodResponse.nf_total_carbohydrate,
 	});
+
+	const handleUpdateServingQty = (num_servings: string) => {
+		setNumServings(num_servings);
+		if (num_servings == "") {
+			return;
+		};
+		setConfirmedFoodItem({
+			...confirmedFoodItem,
+			num_servings: Number(num_servings),
+		})
+	}
 
 	return (
 		<View style={styles.cardContainer}>
-			{receivedResponse ? <View>
-				<Image
-					style={styles.image}
-					source={confirmedFoodItem.image}
-					resizeMode={"cover"} // <- needs to be "cover" for borderRadius to take effect on Android
-				/>
-				<Text>{confirmedFoodItem.name}</Text>
-				<Text>{confirmedFoodItem.brand}, {confirmedFoodItem.amount}</Text>
-				<Text>{confirmedFoodItem.calories} cals</Text>
+			{receivedResponse ? 
+			<View>
+				<View style={{flexDirection: "row"}}>
+					<Image
+						style={styles.image}
+						source={confirmedFoodItem.image}
+						resizeMode={"cover"} // <- needs to be "cover" for borderRadius to take effect on Android
+					/>
+					<View style={{flexDirection: "column", top: 6}}>
+						<Text style={{fontSize: 18}}>{confirmedFoodItem.name}</Text>
+						<Text style={{fontSize: 15}}>{confirmedFoodItem.brand}</Text>
+					</View>
+				</View>
+				<View style={{flexDirection: "row", display: "flex", justifyContent: "space-between"}}>
+					<Text style={{top: 15}}>Number of servings ({confirmedFoodItem.serving_qty} {confirmedFoodItem.serving_unit} ea.)</Text>
+					<View style={styles.input}>
+						<TextInput
+							style={{textAlign: "right"}}
+							value={String(numServings)}
+							onChangeText={handleUpdateServingQty}
+							placeholderTextColor="#60605e"
+							keyboardType={'numeric'}
+						/>
+					</View>
+				</View>
+				<View style={{flexDirection: "row", marginTop: 15, display: "flex", justifyContent: "space-between"}}>
+					<Text>Calories</Text>
+					<Text>{confirmedFoodItem.calories * confirmedFoodItem.num_servings} kcal</Text>
+				</View>
+				<View style={{flexDirection: "row", marginTop: 15, display: "flex", justifyContent: "space-between"}}>
+					<Text>Protien</Text>
+					<Text>{confirmedFoodItem.protein * confirmedFoodItem.num_servings} g</Text>
+				</View>
+				<View style={{flexDirection: "row", marginTop: 15, display: "flex", justifyContent: "space-between"}}>
+					<Text>Fat</Text>
+					<Text>{confirmedFoodItem.fat * confirmedFoodItem.num_servings} g</Text>
+				</View>
+				<View style={{flexDirection: "row", marginTop: 15, display: "flex", justifyContent: "space-between"}}>
+					<Text>Carbs</Text>
+					<Text>{confirmedFoodItem.carbs * confirmedFoodItem.num_servings} g</Text>
+				</View>
 			</View> :
 			<View style={styles.noResponseView}>
 				<Text style={styles.noResponseText}>Scan Your Barcode To Add a Food!</Text>
@@ -99,7 +148,15 @@ const styles = StyleSheet.create({
 		borderColor: 'black',
 		borderWidth: 1,
 		borderRadius: 75
-	  },
+	},
+	input: {
+		height: 40,
+		marginRight: 5,
+		marginTop: 5,
+		width: 50,
+		borderWidth: 1,
+		padding: 10,
+	},
   });
 
   export default ConfirmFood;
