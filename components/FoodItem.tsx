@@ -5,9 +5,14 @@ import { StyleSheet, Image, ImageSourcePropType } from 'react-native';
 export type FoodItemType = {
     name: string;
     brand: string;
-    amount: string;
+    serving_qty: number;
+    serving_unit: string;
+    num_servings: number;
+    image: ImageSourcePropType;
     calories: number;
-    image: ImageSourcePropType
+    protein: number;
+    fat: number;
+    carbs: number;
 }
 
 type ComponentProps = {
@@ -15,7 +20,7 @@ type ComponentProps = {
 }
 
 const FoodItem = (props: ComponentProps) => {
-    const {name, brand, amount, calories, image } = props.foodItem;
+    const {name, brand, serving_qty, serving_unit, calories, image } = props.foodItem;
     return (
       <View style={styles.rowContainer}>
         <Image
@@ -24,7 +29,7 @@ const FoodItem = (props: ComponentProps) => {
           resizeMode={"cover"} // <- needs to be "cover" for borderRadius to take effect on Android
         />
         <Text style={styles.name}>{name}</Text>
-        <Text style={styles.info}>{brand}, {amount}</Text>
+        <Text style={styles.info}>{brand}, {serving_qty} {serving_unit}</Text>
         <Text style={styles.calories}>{calories} cals</Text>
       </View>
     )
