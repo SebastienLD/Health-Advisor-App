@@ -15,6 +15,7 @@ const mockFoodList = [
       fat: 1,
       carbs: 2,
       image: require('../assets/images/TrailMix.jpeg'),
+      addedToInventory: 0,
     }
   ]
 

@@ -18,6 +18,7 @@ export type FoodItemType = {
     protein: number;
     fat: number;
     carbs: number;
+    addedToInventory: number;
 }
 
 type ComponentProps = {
