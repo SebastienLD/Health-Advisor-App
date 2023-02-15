@@ -1,25 +1,31 @@
 import { createContext, Dispatch } from 'react';
 import { FoodItemType } from '../components/FoodItem';
-import { AddFoodAction } from './foodContextReducer';
+import { FoodAction } from './foodContextReducer';
 
 const mockFoodList = [
     {
+      foodItemId: "123",
       name: "Trail Mix",
       brand: "Kirkland",
-      amount: "3 tablespoons",
+      serving_qty: 3,
+      serving_unit: 'ounces',
+      num_servings: 1,
       calories: 160,
+      protein: 9,
+      fat: 1,
+      carbs: 2,
       image: require('../assets/images/TrailMix.jpeg'),
     }
   ]
 
 export type FoodContextType = {
     foodItems: Array<FoodItemType>;
-    foodContextDispatch: Dispatch<AddFoodAction>;
+    foodContextDispatch: Dispatch<FoodAction>;
 }
 
 export const initialFoodState = {
     foodItems: mockFoodList,
-    foodContextDispatch: () => {}
+    foodContextDispatch: () => {},
 }
 
 export const FoodContext = createContext<FoodContextType>(initialFoodState);

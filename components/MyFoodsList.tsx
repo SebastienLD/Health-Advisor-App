@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import FoodItem, { FoodItemType } from './FoodItem';
 
 type ComponentProps = {
@@ -13,7 +13,16 @@ const MyFoodList = (props: ComponentProps) => {
             <ScrollView>
             {foodItemList.map((foodItem, index) => {
                     return (
-                        <FoodItem key={index} foodItem={foodItem} />
+                        <View key={index}>
+                            <FoodItem foodItem={foodItem} />
+                            <View
+                                style={{
+                                    borderBottomColor: 'black',
+                                    borderBottomWidth: StyleSheet.hairlineWidth,
+                                    marginBottom: 10,
+                                }}
+                            />
+                        </View>
                     )
                 })
             }
