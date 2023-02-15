@@ -1,16 +1,9 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Image, TextInput } from 'react-native';
 import { Text, View } from './Themed';
-import FoodItem, { FoodItemType } from './FoodItem';
+import { FoodItemType } from './FoodItem';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useLinkBuilder } from '@react-navigation/native';
 import uuid from 'react-native-uuid';
-
-type PhotoFromAPI = {
-	thumb: string;
-	highres: boolean;
-	is_user_uploaded: boolean;
-}
 
 export type FullFoodResponse = {
     food_name: string;
@@ -64,6 +57,7 @@ const ConfirmFood = (props: ComponentProps) => {
 		protein: NaN,
 		fat: NaN,
 		carbs: NaN,
+		addedToInventory: NaN,
 	});
 
 	useEffect(() => {
@@ -80,6 +74,7 @@ const ConfirmFood = (props: ComponentProps) => {
 				protein: foodResponse.nf_protein,
 				fat: foodResponse.nf_total_fat,
 				carbs: foodResponse.nf_total_carbohydrate,
+				addedToInventory: Date.now(),
 			})
 		}
 	}, [receivedResponse, foodResponse]);

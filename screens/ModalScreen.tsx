@@ -5,109 +5,8 @@ import { FoodContext } from '../contexts/foodsContext';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
 import ConfirmFood, { FullFoodResponse } from '../components/ConfirmFood';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';import { FoodItemType } from '../components/FoodItem';
+import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
 
-const exampleResponse = {
-	"foods": [
-		{
-			"food_name": "Beef Jerky, Chipotle Adobo",
-			"brand_name": "Three Jerks",
-			"serving_qty": 1,
-			"serving_unit": "oz",
-			"serving_weight_grams": 28,
-			"nf_calories": 100,
-			"nf_total_fat": 3,
-			"nf_saturated_fat": 1,
-			"nf_cholesterol": 30,
-			"nf_sodium": 350,
-			"nf_total_carbohydrate": 8,
-			"nf_dietary_fiber": 1,
-			"nf_sugars": 6,
-			"nf_protein": 10,
-			"nf_potassium": null,
-			"nf_p": null,
-			"full_nutrients": [
-				{
-					"attr_id": 203,
-					"value": 10
-				},
-				{
-					"attr_id": 204,
-					"value": 3
-				},
-				{
-					"attr_id": 205,
-					"value": 8
-				},
-				{
-					"attr_id": 208,
-					"value": 100
-				},
-				{
-					"attr_id": 269,
-					"value": 6
-				},
-				{
-					"attr_id": 291,
-					"value": 1
-				},
-				{
-					"attr_id": 301,
-					"value": 26
-				},
-				{
-					"attr_id": 303,
-					"value": 1.44
-				},
-				{
-					"attr_id": 307,
-					"value": 350
-				},
-				{
-					"attr_id": 318,
-					"value": 300
-				},
-				{
-					"attr_id": 401,
-					"value": 0
-				},
-				{
-					"attr_id": 601,
-					"value": 30
-				},
-				{
-					"attr_id": 605,
-					"value": 0
-				},
-				{
-					"attr_id": 606,
-					"value": 1
-				}
-			],
-			"nix_brand_name": "Three Jerks",
-			"nix_brand_id": "551af50449bbebc5780a61b0",
-			"nix_item_name": "Beef Jerky, Chipotle Adobo",
-			"nix_item_id": "5556515436f95593518aa94e",
-			"metadata": {},
-			"source": 8,
-			"ndb_no": null,
-			"tags": null,
-			"alt_measures": null,
-			"lat": null,
-			"lng": null,
-			"photo": {
-				"thumb": "https://nutritionix-api.s3.amazonaws.com/555652c40761f2ce5d7e076d.jpeg",
-				"highres": null,
-				"is_user_uploaded": false
-			},
-			"note": null,
-			"class_code": null,
-			"brick_code": null,
-			"tag_id": null,
-			"updated_at": "2019-01-27T10:39:22+00:00",
-			"nf_ingredient_statement": "Beef, Water, Sugar, Less than 2% Salt, Corn Syrup Solids, Dried Soy Sauce (Soybeans, Salt, Wheat), Hydrolyzed Corn and Soy Protein, Monosodium Glutamate, Maltodextrin, Flavorings, Sodium Erythorbate, Sodium Nitrite."
-		}
-	]
-}
 
 // TODO: PUT IN CONFIG FILE
 const base_nutritionix_api = "https://trackapi.nutritionix.com/v2/search/item";
@@ -126,7 +25,6 @@ type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 const App = ( { navigation, route } : ComponentProps) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const [manualUPC, setManualUPC] = useState('');
   const [fullFoodResponse, setFullFoodResponse] = useState<FullFoodResponse>();
   const [receivedFoodResponse, setReceievedFoodResponse] = useState(false);
   const foodContext = useContext(FoodContext);
@@ -154,12 +52,13 @@ const App = ( { navigation, route } : ComponentProps) => {
     }
   }
 
-  const goToFoodListPage = (confirmedFoodItem: FoodItemType) => {
+  const handleConfirmFood = (confirmedFoodItem: FoodItemType) => {
     console.log("Clicked confirm button");
     foodContext.foodContextDispatch({
       type: FoodContextActionTypes.AddFood,
       payload: confirmedFoodItem
     });
+    FoodItemFirestoreService.uploadFoodItem(confirmedFoodItem);
     navigation.navigate('TabOne');
   }
 
@@ -196,7 +95,7 @@ const App = ( { navigation, route } : ComponentProps) => {
       <ConfirmFood 
         receivedResponse={receivedFoodResponse}
         foodResponse={fullFoodResponse}
-        handleConfirmFood={goToFoodListPage}
+        handleConfirmFood={handleConfirmFood}
         scanned={scanned}
       />
       {scanned && 
