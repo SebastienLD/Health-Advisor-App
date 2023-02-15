@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { StyleSheet, Image, TextInput } from 'react-native';
 import { Text, View } from './Themed';
 import FoodItem, { FoodItemType } from './FoodItem';
-
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useLinkBuilder } from '@react-navigation/native';
+import uuid from 'react-native-uuid';
 
 type PhotoFromAPI = {
 	thumb: string;
@@ -10,7 +12,7 @@ type PhotoFromAPI = {
 	is_user_uploaded: boolean;
 }
 
-type FullFoodResponse = {
+export type FullFoodResponse = {
     food_name: string;
     brand_name: string,
 	serving_qty: number,
@@ -40,26 +42,47 @@ type FullFoodResponse = {
 }
 
 type ComponentProps = {
-	foodResponse: FullFoodResponse;
+	foodResponse: FullFoodResponse | undefined;
 	receivedResponse: boolean;
+	handleConfirmFood: (confirmedFoodItem: FoodItemType) => void;
+	scanned: boolean;
 }
 
 const ConfirmFood = (props: ComponentProps) => {
-	const { foodResponse, receivedResponse } = props;
+	const { foodResponse, receivedResponse, handleConfirmFood, scanned } = props;
 	const [numServings, setNumServings] = useState<string>("1");
 
 	const [confirmedFoodItem, setConfirmedFoodItem] = useState<FoodItemType>({
-		name: foodResponse.food_name,
-		brand: foodResponse.brand_name,
-		serving_qty: foodResponse.serving_qty,
-		serving_unit: foodResponse.serving_unit,
-		num_servings: 1,
-		calories: foodResponse.nf_calories,
-		image: {uri: foodResponse.photo.thumb},
-		protein: foodResponse.nf_protein,
-		fat: foodResponse.nf_total_fat,
-		carbs: foodResponse.nf_total_carbohydrate,
+		foodItemId: "",
+		name: "No Item",
+		brand: "",
+		serving_qty: 1,
+		serving_unit: "",
+		num_servings: NaN,
+		calories: NaN,
+		image: {uri: undefined},
+		protein: NaN,
+		fat: NaN,
+		carbs: NaN,
 	});
+
+	useEffect(() => {
+		if (receivedResponse && foodResponse) {
+			setConfirmedFoodItem({
+				foodItemId: String(uuid.v4()),
+				name: foodResponse.food_name,
+				brand: foodResponse.brand_name,
+				serving_qty: foodResponse.serving_qty,
+				serving_unit: foodResponse.serving_unit,
+				num_servings: 1,
+				calories: foodResponse.nf_calories,
+				image: {uri: foodResponse.photo.thumb},
+				protein: foodResponse.nf_protein,
+				fat: foodResponse.nf_total_fat,
+				carbs: foodResponse.nf_total_carbohydrate,
+			})
+		}
+	}, [receivedResponse, foodResponse]);
 
 	const handleUpdateServingQty = (num_servings: string) => {
 		setNumServings(num_servings);
@@ -74,21 +97,25 @@ const ConfirmFood = (props: ComponentProps) => {
 
 	return (
 		<View style={styles.cardContainer}>
-			{receivedResponse ? 
 			<View>
-				<View style={{flexDirection: "row"}}>
+				<View style={{flexDirection: "row", display: "flex", justifyContent: "space-between"}}>
 					<Image
 						style={styles.image}
 						source={confirmedFoodItem.image}
 						resizeMode={"cover"} // <- needs to be "cover" for borderRadius to take effect on Android
 					/>
-					<View style={{flexDirection: "column", top: 6}}>
-						<Text style={{fontSize: 18}}>{confirmedFoodItem.name}</Text>
-						<Text style={{fontSize: 15}}>{confirmedFoodItem.brand}</Text>
+					<View style={{flexDirection: "column", top: 6, marginRight: 22}}>
+						<Text style={{fontSize: 16, maxWidth: 200}}>{confirmedFoodItem.name}</Text>
+						<Text style={{fontSize: 14}}>{confirmedFoodItem.brand}</Text>
 					</View>
+					<Ionicons
+						onPress={() => handleConfirmFood(confirmedFoodItem)}
+						name="md-checkmark-circle" 
+						size={32} 
+					/>
 				</View>
 				<View style={{flexDirection: "row", display: "flex", justifyContent: "space-between"}}>
-					<Text style={{top: 15}}>Number of servings ({confirmedFoodItem.serving_qty} {confirmedFoodItem.serving_unit} ea.)</Text>
+					<Text style={{top: 15}}>Number of servings {confirmedFoodItem.serving_qty.toFixed(2)} {confirmedFoodItem.serving_unit} ea.)</Text>
 					<View style={styles.input}>
 						<TextInput
 							style={{textAlign: "right"}}
@@ -96,6 +123,7 @@ const ConfirmFood = (props: ComponentProps) => {
 							onChangeText={handleUpdateServingQty}
 							placeholderTextColor="#60605e"
 							keyboardType={'numeric'}
+							autoFocus={scanned}
 						/>
 					</View>
 				</View>
@@ -115,17 +143,14 @@ const ConfirmFood = (props: ComponentProps) => {
 					<Text>Carbs</Text>
 					<Text>{confirmedFoodItem.carbs * confirmedFoodItem.num_servings} g</Text>
 				</View>
-			</View> :
-			<View style={styles.noResponseView}>
-				<Text style={styles.noResponseText}>Scan Your Barcode To Add a Food!</Text>
 			</View>
-			}
 		</View>
 	)
 }
 
 const styles = StyleSheet.create({
 	cardContainer: {
+		marginTop: 15,
 		padding: 10,
 		width: '90%',
 		height: '45%',
@@ -142,8 +167,8 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 	},
 	image: {
-		width: 60,
-		height: 60,
+		width: 50,
+		height: 50,
 		marginRight: 10,
 		borderColor: 'black',
 		borderWidth: 1,

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useReducer, useContext } from 'react';
-import { Text, View, StyleSheet, Button, TextInput } from 'react-native';
+import { Text, View, StyleSheet, Pressable } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { FoodContext } from '../contexts/foodsContext';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
-import ConfirmFood from '../components/ConfirmFood';
-import { FullFoodResponse } from '../components/ConfirmFood';
+import ConfirmFood, { FullFoodResponse } from '../components/ConfirmFood';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';import { FoodItemType } from '../components/FoodItem';
 
 const exampleResponse = {
 	"foods": [
@@ -114,11 +114,20 @@ const base_nutritionix_api = "https://trackapi.nutritionix.com/v2/search/item";
 const app_id = 'eed60937';
 const app_key = '09e865c9a2fbb04be2f1e1de03eb07a4';
 
-export default function App() {
+
+type RootStackParamList = {
+  TabOne: undefined;
+  TabTwo: undefined;
+};
+
+type ComponentProps = NativeStackScreenProps<RootStackParamList>;
+
+
+const App = ( { navigation, route } : ComponentProps) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [manualUPC, setManualUPC] = useState('');
-  const [fullFoodResponse, setFullFoodResponse] = useState<FullFoodResponse>({});
+  const [fullFoodResponse, setFullFoodResponse] = useState<FullFoodResponse>();
   const [receivedFoodResponse, setReceievedFoodResponse] = useState(false);
   const foodContext = useContext(FoodContext);
 
@@ -140,18 +149,18 @@ export default function App() {
         setReceievedFoodResponse(true);
       }
       setFullFoodResponse(json["foods"][0]);
-      foodContext.foodContextDispatch({type: FoodContextActionTypes.AddFood, payload: {
-        name: json["foods"][0]["food_name"],
-        brand: json["foods"][0]["brand_name"],
-        serving_qty: json["foods"][0]["serving_qty"],
-        serving_unit: json["foods"][0]["serving_unit"],
-        num_servings: 1,
-        calories: json["foods"][0]["nf_calories"],
-        image: require('../assets/images/TrailMix.jpeg'),
-      }});
     } catch (error) {
       console.log(error);
     }
+  }
+
+  const goToFoodListPage = (confirmedFoodItem: FoodItemType) => {
+    console.log("Clicked confirm button");
+    foodContext.foodContextDispatch({
+      type: FoodContextActionTypes.AddFood,
+      payload: confirmedFoodItem
+    });
+    navigation.navigate('TabOne');
   }
 
   useEffect(() => {
@@ -168,7 +177,6 @@ export default function App() {
     if (type === 'org.gs1.EAN-13') {
       queryNutritionIx(data);
     }
-    alert(`Your food item has been added!`);
   };
 
   if (hasPermission === null) {
@@ -180,27 +188,22 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <BarCodeScanner
-        onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-        style={styles.scannerContainer}
-      />
-      {scanned && <Button title={'Tap to Scan Again'} onPress={() => setScanned(false)} />}
+      {!scanned && 
+        <BarCodeScanner
+          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+          style={styles.scannerContainer}
+      />}
       <ConfirmFood 
-        receivedResponse={true}
-        foodResponse={exampleResponse["foods"][0]} 
+        receivedResponse={receivedFoodResponse}
+        foodResponse={fullFoodResponse}
+        handleConfirmFood={goToFoodListPage}
+        scanned={scanned}
       />
-      {/* <TextInput
-        style={styles.input}
-        onChangeText={setManualUPC}
-        value={manualUPC}
-        placeholder={"Type UPC Manually"}
-      />
-      <Button
-        title="Fetch"
-        onPress={() => {
-          queryNutritionIx(manualUPC);
-        }}
-      /> */}
+      {scanned && 
+        <Pressable style={styles.pressAgainButton} onPress={() => setScanned(false)} >
+          <Text style={{fontSize: 20}}>Scan Again</Text>
+        </Pressable>
+      }
     </View>
   );
 }
@@ -210,12 +213,21 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
   },
+  pressAgainButton: {
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 5,
+    borderColor: 'black',
+    backgroundColor: '#FFFFFF',
+    marginTop: 10,
+  },
   scannerContainer: {
     width: '90%',
-    height: '40%',
+    height: '30%',
     marginTop: 20,
     marginBottom: 20,
     borderRadius: 15,
+    overflow: 'hidden',
   },
   title: {
     fontSize: 20,
@@ -234,3 +246,5 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
+
+export default App;
