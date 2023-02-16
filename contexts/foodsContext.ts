@@ -3,8 +3,8 @@ import { FoodItemType } from '../components/FoodItem';
 import { FoodAction } from './foodContextReducer';
 
 const mockFoodItemState = {
-    "123": {
-      foodItemId: "123",
+    "mock-item": {
+      foodItemId: "mock-item",
       name: "Trail Mix",
       brand: "Kirkland",
       serving_qty: 3,
@@ -30,7 +30,10 @@ export type FoodContextType = {
 
 export const initialFoodState = {
     foodItemState: mockFoodItemState,
-    foodContextDispatch: () => {},
+    foodContextDispatch: (value: FoodAction) => {
+      console.log(value.payload);
+      return;
+    },
 }
 
 export const FoodContext = createContext<FoodContextType>(initialFoodState);
