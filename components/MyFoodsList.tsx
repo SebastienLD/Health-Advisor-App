@@ -12,6 +12,8 @@ const MyFoodList = (props: ComponentProps) => {
     const { foodItemList, navigation } = props; 
     const foodItemListDescending = foodItemList.sort((a: FoodItemType, b: FoodItemType) => {
         return b.addedToInventory - a.addedToInventory;
+    }).filter((item) => {
+        return item.foodItemId !== "mock-item";
     })
     
     return (
