@@ -1,12 +1,42 @@
 import React, { useState, useEffect, useReducer, useContext } from 'react';
 import { Text, View, StyleSheet, Pressable } from 'react-native';
-import { BarCodeScanner } from 'expo-barcode-scanner';
+import { BarCodeScanner, BarCodeScannedCallback, BarCodeEventCallbackArguments, BarCodeEvent } from 'expo-barcode-scanner';
 import { FoodContext } from '../contexts/foodsContext';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
-import ConfirmFood, { FullFoodResponse } from '../components/ConfirmFood';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';import { FoodItemType } from '../components/FoodItem';
+import ConfirmFood  from '../components/ConfirmFood';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { FoodItemType } from '../components/FoodItem';
 import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
+import uuid from 'react-native-uuid';
 
+export type FullFoodResponse = {
+  food_name: string;
+  brand_name: string,
+  serving_qty: number,
+  serving_unit: string,
+  serving_weight_grams: number,
+  nf_calories: number,
+  nf_total_fat: number,
+  nf_saturated_fat: number,
+  nf_cholesterol: number,
+  nf_sodium: number,
+  nf_total_carbohydrate: number,
+  nf_dietary_fiber: number,
+  nf_sugars: number,
+  nf_protein: number,
+  nf_potassium: number | null,
+  nf_p: number | null,
+  nix_brand_name: string,
+  nix_brand_id: string,
+  nix_item_name: string,
+  nix_item_id: string,
+  photo: {
+    thumb: string,
+    highres: null,
+    is_user_uploaded: boolean
+  },
+  nf_ingredient_statement: string
+}
 
 // TODO: PUT IN CONFIG FILE
 const base_nutritionix_api = "https://trackapi.nutritionix.com/v2/search/item";
@@ -22,8 +52,8 @@ type RootStackParamList = {
 type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 
 
-const App = ( { navigation, route } : ComponentProps) => {
-  const [hasPermission, setHasPermission] = useState(null);
+const ModalScreen = ( { navigation, route } : ComponentProps) => {
+  const [hasPermission, setHasPermission] = useState(false);
   const [scanned, setScanned] = useState(false);
   const [fullFoodResponse, setFullFoodResponse] = useState<FullFoodResponse>();
   const [receivedFoodResponse, setReceievedFoodResponse] = useState(false);
@@ -65,16 +95,16 @@ const App = ( { navigation, route } : ComponentProps) => {
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
-      setHasPermission(status === 'granted'); // TODO: FIX TYPING
+      setHasPermission(status === 'granted');
     };
 
     getBarCodeScannerPermissions();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }) => { // TODO: FIX TYPING
+  const handleBarCodeScanned: BarCodeScannedCallback = (params: BarCodeEvent) => {
     setScanned(true);
-    if (type === 'org.gs1.EAN-13') {
-      queryNutritionIx(data);
+    if (params.type === 'org.gs1.EAN-13') {
+      queryNutritionIx(params.data);
     }
   };
 
@@ -94,7 +124,21 @@ const App = ( { navigation, route } : ComponentProps) => {
       />}
       <ConfirmFood 
         receivedResponse={receivedFoodResponse}
-        foodResponse={fullFoodResponse}
+        foodItem={fullFoodResponse ? {
+          // setting temporary uuid, will get overridden by firebase
+          foodItemId: String(uuid.v4()),
+          name: fullFoodResponse.food_name,
+          brand: fullFoodResponse.brand_name,
+          serving_qty: fullFoodResponse.serving_qty,
+          serving_unit: fullFoodResponse.serving_unit,
+          num_servings: 1,
+          calories: fullFoodResponse.nf_calories,
+          image: {uri: fullFoodResponse.photo.thumb},
+          protein: fullFoodResponse.nf_protein,
+          fat: fullFoodResponse.nf_total_fat,
+          carbs: fullFoodResponse.nf_total_carbohydrate,
+          addedToInventory: Date.now(),
+        } : undefined}
         handleConfirmFood={handleConfirmFood}
         scanned={scanned}
       />
@@ -146,4 +190,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default ModalScreen;

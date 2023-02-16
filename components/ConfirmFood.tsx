@@ -3,46 +3,16 @@ import { StyleSheet, Image, TextInput } from 'react-native';
 import { Text, View } from './Themed';
 import { FoodItemType } from './FoodItem';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import uuid from 'react-native-uuid';
-
-export type FullFoodResponse = {
-    food_name: string;
-    brand_name: string,
-	serving_qty: number,
-	serving_unit: string,
-	serving_weight_grams: number,
-	nf_calories: number,
-	nf_total_fat: number,
-	nf_saturated_fat: number,
-	nf_cholesterol: number,
-	nf_sodium: number,
-	nf_total_carbohydrate: number,
-	nf_dietary_fiber: number,
-	nf_sugars: number,
-	nf_protein: number,
-	nf_potassium: number | null,
-	nf_p: number | null,
-	nix_brand_name: string,
-	nix_brand_id: string,
-	nix_item_name: string,
-	nix_item_id: string,
-	photo: {
-		thumb: string,
-		highres: null,
-		is_user_uploaded: boolean
-	},
-	nf_ingredient_statement: string
-}
 
 type ComponentProps = {
-	foodResponse: FullFoodResponse | undefined;
+	foodItem: FoodItemType | undefined;
 	receivedResponse: boolean;
 	handleConfirmFood: (confirmedFoodItem: FoodItemType) => void;
 	scanned: boolean;
 }
 
 const ConfirmFood = (props: ComponentProps) => {
-	const { foodResponse, receivedResponse, handleConfirmFood, scanned } = props;
+	const { foodItem, receivedResponse, handleConfirmFood, scanned } = props;
 	const [numServings, setNumServings] = useState<string>("1");
 
 	const [confirmedFoodItem, setConfirmedFoodItem] = useState<FoodItemType>({
@@ -61,23 +31,10 @@ const ConfirmFood = (props: ComponentProps) => {
 	});
 
 	useEffect(() => {
-		if (receivedResponse && foodResponse) {
-			setConfirmedFoodItem({
-				foodItemId: String(uuid.v4()),
-				name: foodResponse.food_name,
-				brand: foodResponse.brand_name,
-				serving_qty: foodResponse.serving_qty,
-				serving_unit: foodResponse.serving_unit,
-				num_servings: 1,
-				calories: foodResponse.nf_calories,
-				image: {uri: foodResponse.photo.thumb},
-				protein: foodResponse.nf_protein,
-				fat: foodResponse.nf_total_fat,
-				carbs: foodResponse.nf_total_carbohydrate,
-				addedToInventory: Date.now(),
-			})
+		if (receivedResponse && foodItem) {
+			setConfirmedFoodItem(foodItem);
 		}
-	}, [receivedResponse, foodResponse]);
+	}, [receivedResponse, foodItem]);
 
 	const handleUpdateServingQty = (num_servings: string) => {
 		setNumServings(num_servings);
