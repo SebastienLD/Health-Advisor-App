@@ -4,6 +4,7 @@ import { FoodContextType } from "./foodsContext";
 export enum FoodContextActionTypes {
   AddFood = 'ADD_FOOD',
   DeleteFood = 'DELETE_FOOD',
+  EditFood = 'EDIT_FOOD',
 }
 
 export interface FoodAction {
@@ -18,21 +19,19 @@ export const foodContextReducer = (state: FoodContextType, action: FoodAction) =
   let next = state;
   switch (type) {
     case FoodContextActionTypes.AddFood:
+    case FoodContextActionTypes.EditFood:
       console.log("Got into the add food case");
       next = {
         ...state,
-        foodItems: next.foodItems.concat([payload]),
+        foodItemState: {
+          ...next.foodItemState,
+          [payload.foodItemId]: payload,
+        },
       };
       break;
     case FoodContextActionTypes.DeleteFood:
       console.log("Got into the remove food case");
-      const foodItemsWithoutItem = next.foodItems.filter((val, index, arr) => {
-        return val.foodItemId !== payload.foodItemId;
-      });
-      next = {
-        ...state,
-        foodItems: foodItemsWithoutItem,
-      }
+      delete next.foodItemState[payload.foodItemId];
       break;
     default:
       console.log("Incorrect action type was given");

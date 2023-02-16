@@ -1,5 +1,5 @@
 import { db } from '../firebase/firebaseApp';
-import { collection, addDoc, getDocs, orderBy, query } from "firebase/firestore"; 
+import { collection, addDoc, getDocs, orderBy, query, setDoc, doc } from "firebase/firestore"; 
 import { FoodItemType } from '../components/FoodItem';
 
 // Add a new document with a generated id.
@@ -10,6 +10,12 @@ const FoodItemFirestoreService = {
     uploadFoodItem: async (foodItem: FoodItemType) => {
         const docRef = await addDoc(collection(db, FOOD_INVENTORY_COLLECTION), foodItem);
         console.log("Document written with ID: ", docRef.id);
+        foodItem.foodItemId = docRef.id;
+        FoodItemFirestoreService.editFoodItem(foodItem);
+    },
+    editFoodItem: async (foodItem: FoodItemType) => {
+        await setDoc(doc(db, FOOD_INVENTORY_COLLECTION, foodItem.foodItemId), foodItem);
+        console.log("Document updated");
     },
     getAllFoodItems: async () : Promise<Array<FoodItemType>> => {
         const queryFoodInvetory = query(collection(db, FOOD_INVENTORY_COLLECTION), orderBy("addedToInventory", "desc"));

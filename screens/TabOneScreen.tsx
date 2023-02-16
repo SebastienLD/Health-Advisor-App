@@ -6,11 +6,19 @@ import {FoodContext} from '../contexts/foodsContext';
 import { useEffect } from 'react';
 import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
+export type RootStackParamList = {
+  TabTwo: undefined;
+  Modal: undefined;
+  EditFoodScreen: { foodItemId: string };
+};
 
-export default function TabOneScreen() {
+type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 
+const TabOneScreen = ( {navigation, route }: ComponentProps) => {
   const foodContext = useContext(FoodContext);
+  console.log(foodContext);
 
   useEffect(() => {
     const fillFoodContext = async () => {
@@ -27,7 +35,14 @@ export default function TabOneScreen() {
 
   return (
     <View style={styles.container}>
-      <MyFoodsList foodItemList={foodContext.foodItems} />
+      <MyFoodsList 
+        foodItemList={
+          foodContext.foodItemState ? 
+            Object.values(foodContext.foodItemState)
+            : []
+          }
+        navigation={navigation}
+      />
     </View>
   );
 }
@@ -39,3 +54,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default TabOneScreen;

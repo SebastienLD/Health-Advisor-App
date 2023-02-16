@@ -1,10 +1,12 @@
 
 import { useContext } from 'react';
 import { Text, View } from './Themed';
-import { StyleSheet, Image, ImageSourcePropType } from 'react-native';
+import { StyleSheet, Image, ImageSourcePropType, Pressable } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { FoodContext } from '../contexts/foodsContext';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../screens/TabOneScreen';
 
 export type FoodItemType = {
     foodItemId: string;
@@ -23,10 +25,13 @@ export type FoodItemType = {
 
 type ComponentProps = {
   foodItem: FoodItemType;
+  navigation:  NativeStackNavigationProp<RootStackParamList>;
 }
 
+
 const FoodItem = (props: ComponentProps) => {
-    const {name, brand, serving_qty, serving_unit, calories, image, num_servings} = props.foodItem;
+    const { foodItem, navigation } = props;
+    const {name, brand, serving_qty, serving_unit, calories, image, num_servings} = foodItem;
     const foodContext = useContext(FoodContext);
 
     const onRemoveFood = () => {
@@ -37,7 +42,11 @@ const FoodItem = (props: ComponentProps) => {
     };
 
     return (
-      <View style={styles.row}>
+      <Pressable 
+        style={styles.row}
+        onPress={() => navigation.navigate("EditFoodScreen",{ foodItemId: foodItem.foodItemId },
+        )}
+      >
         <View style={styles.rowContainer}>
           <Image
             style={styles.image}
@@ -54,7 +63,7 @@ const FoodItem = (props: ComponentProps) => {
           name="trash-bin-outline" 
           size={32} 
         />
-      </View>
+      </Pressable>
     )
 };
 

@@ -2,8 +2,8 @@ import { createContext, Dispatch } from 'react';
 import { FoodItemType } from '../components/FoodItem';
 import { FoodAction } from './foodContextReducer';
 
-const mockFoodList = [
-    {
+const mockFoodItemState = {
+    "123": {
       foodItemId: "123",
       name: "Trail Mix",
       brand: "Kirkland",
@@ -17,15 +17,19 @@ const mockFoodList = [
       image: require('../assets/images/TrailMix.jpeg'),
       addedToInventory: 0,
     }
-  ]
+}
+
+type FoodItemState = {
+  [foodItemId: string]: FoodItemType;
+}
 
 export type FoodContextType = {
-    foodItems: Array<FoodItemType>;
+    foodItemState: FoodItemState;
     foodContextDispatch: Dispatch<FoodAction>;
 }
 
 export const initialFoodState = {
-    foodItems: mockFoodList,
+    foodItemState: mockFoodItemState,
     foodContextDispatch: () => {},
 }
 

@@ -1,20 +1,26 @@
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import FoodItem, { FoodItemType } from './FoodItem';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../screens/TabOneScreen';
 
 type ComponentProps = {
     foodItemList: Array<FoodItemType>;
+    navigation:  NativeStackNavigationProp<RootStackParamList>;
 }
 
 const MyFoodList = (props: ComponentProps) => {
-    const { foodItemList } = props; 
+    const { foodItemList, navigation } = props; 
+    const foodItemListDescending = foodItemList.sort((a: FoodItemType, b: FoodItemType) => {
+        return b.addedToInventory - a.addedToInventory;
+    })
     
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
-            {foodItemList.map((foodItem, index) => {
+            {foodItemListDescending.map((foodItem, index) => {
                     return (
                         <View key={index}>
-                            <FoodItem foodItem={foodItem} />
+                            <FoodItem foodItem={foodItem} navigation={navigation} />
                             <View
                                 style={{
                                     borderBottomColor: 'black',
