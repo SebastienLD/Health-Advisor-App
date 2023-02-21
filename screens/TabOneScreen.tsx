@@ -37,8 +37,8 @@ const TabOneScreen = ( {navigation, route }: ComponentProps) => {
     <View style={styles.container}>
       <MyFoodsList 
         foodItemList={
-          foodContext.foodItemState ? 
-            Object.values(foodContext.foodItemState)
+          foodContext.foodInventoryState ? 
+            Object.values(foodContext.foodInventoryState)
             : []
           }
         navigation={navigation}

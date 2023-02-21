@@ -30,7 +30,7 @@ const EditFoodScreen = ( {navigation, route } : ComponentProps ) => {
       }
 
     useEffect(() => {
-        setFoodItem(foodContext.foodItemState[route.params.foodItemId]);
+        setFoodItem(foodContext.foodInventoryState[route.params.foodItemId]);
     }, []);
 
     return (

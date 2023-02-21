@@ -1,11 +1,25 @@
+import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
-import { Text, View } from '../components/Themed';
+import { View } from '../components/Themed';
+import { FoodContext } from '../contexts/foodsContext';
+import MyFoodsList from '../components/MyFoodsList';
+import { RootStackParamList } from './TabOneScreen';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-export default function TabTwoScreen() {
+type ComponentProps = NativeStackScreenProps<RootStackParamList>;
+
+const TabTwoScreen = ({ navigation, route }: ComponentProps) => {
+  const foodContext = useContext(FoodContext);
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+      <MyFoodsList 
+        foodItemList={
+          foodContext.dailyFoodState ? 
+            Object.values(foodContext.dailyFoodState)
+            : []
+          }
+        navigation={navigation}
+      />
     </View>
   );
 }
@@ -16,13 +30,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
 });
+
+export default TabTwoScreen;

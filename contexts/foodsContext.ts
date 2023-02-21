@@ -2,7 +2,7 @@ import { createContext, Dispatch } from 'react';
 import { FoodItemType } from '../components/FoodItem';
 import { FoodAction } from './foodContextReducer';
 
-const mockFoodItemState = {
+const mockfoodInventoryState = {
     "mock-item": {
       foodItemId: "mock-item",
       name: "Trail Mix",
@@ -19,17 +19,19 @@ const mockFoodItemState = {
     }
 }
 
-type FoodItemState = {
+type foodInventoryState = {
   [foodItemId: string]: FoodItemType;
 }
 
 export type FoodContextType = {
-    foodItemState: FoodItemState;
+    foodInventoryState: foodInventoryState;
+    dailyFoodState: foodInventoryState;
     foodContextDispatch: Dispatch<FoodAction>;
 }
 
 export const initialFoodState = {
-    foodItemState: mockFoodItemState,
+    foodInventoryState: mockfoodInventoryState,
+    dailyFoodState: mockfoodInventoryState,
     foodContextDispatch: (value: FoodAction) => {
       console.log(value.payload);
       return;

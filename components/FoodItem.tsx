@@ -41,6 +41,13 @@ const FoodItem = (props: ComponentProps) => {
       });
     };
 
+    const onEatFood = () => {
+      foodContext.foodContextDispatch({
+        type: FoodContextActionTypes.EatFood,
+        payload: props.foodItem,
+      })
+    }
+
     return (
       <Pressable 
         style={styles.row}
@@ -57,12 +64,18 @@ const FoodItem = (props: ComponentProps) => {
           <Text style={styles.info}>{brand}, {num_servings * serving_qty} {serving_unit}</Text>
           <Text style={styles.calories}>{calories * num_servings} cals</Text>
         </View>
-        <Ionicons
-          style={{marginTop: 10, marginRight: 10}}
-          onPress={() => onRemoveFood()}
-          name="trash-bin-outline" 
-          size={32} 
-        />
+        <View style={{marginRight: 10}}>
+          <Ionicons
+            onPress={() => onEatFood()}
+            name="fast-food-outline"
+            size={32}
+          />
+          <Ionicons
+            onPress={() => onRemoveFood()}
+            name="trash-bin-outline" 
+            size={32} 
+          />
+        </View>
       </Pressable>
     )
 };
