@@ -5,7 +5,7 @@ import { FoodContext } from '../contexts/foodsContext';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
 import ConfirmFood  from '../components/ConfirmFood';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { FoodItemType } from '../components/FoodItem';
+import { FoodItem } from '../components/FoodItem';
 import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
 import uuid from 'react-native-uuid';
 
@@ -82,7 +82,7 @@ const ModalScreen = ( { navigation, route } : ComponentProps) => {
     }
   }
 
-  const handleConfirmFood = (confirmedFoodItem: FoodItemType) => {
+  const handleConfirmFood = (confirmedFoodItem: FoodItem) => {
     console.log("Clicked confirm button");
     foodContext.foodContextDispatch({
       type: FoodContextActionTypes.AddFood,

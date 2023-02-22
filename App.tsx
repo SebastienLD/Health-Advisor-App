@@ -19,7 +19,11 @@ export default function App() {
 
     return (
       <SafeAreaProvider>
-        <FoodContext.Provider value={{ foodInventoryState: state.foodInventoryState, foodContextDispatch: dispatch }}>
+        <FoodContext.Provider value={{ 
+          foodInventoryState: state.foodInventoryState,
+          dailyFoodState: state.dailyFoodState,
+          foodContextDispatch: dispatch,
+        }}>
           <Navigation colorScheme={colorScheme} />
           <StatusBar />
         </FoodContext.Provider>

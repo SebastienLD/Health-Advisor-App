@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, Image, TextInput } from 'react-native';
 import { Text, View } from './Themed';
-import { FoodItemType } from './FoodItem';
+import { FoodItem } from './FoodItem';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 type ComponentProps = {
-	foodItem: FoodItemType | undefined;
+	foodItem: FoodItem | undefined;
 	receivedResponse: boolean;
-	handleConfirmFood: (confirmedFoodItem: FoodItemType) => void;
+	handleConfirmFood: (confirmedFoodItem: FoodItem) => void;
 	scanned: boolean;
 }
 
@@ -15,7 +15,7 @@ const ConfirmFood = (props: ComponentProps) => {
 	const { foodItem, receivedResponse, handleConfirmFood, scanned } = props;
 	const [numServings, setNumServings] = useState<string>("1");
 
-	const [confirmedFoodItem, setConfirmedFoodItem] = useState<FoodItemType>({
+	const [confirmedFoodItem, setConfirmedFoodItem] = useState<FoodItem>({
 		foodItemId: "",
 		name: "No Item",
 		brand: "",

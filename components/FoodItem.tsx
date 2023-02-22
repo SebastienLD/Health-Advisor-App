@@ -7,8 +7,9 @@ import { FoodContext } from '../contexts/foodsContext';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../screens/TabOneScreen';
+import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
 
-export type FoodItemType = {
+export type FoodItem = {
     foodItemId: string;
     name: string;
     brand: string;
@@ -23,18 +24,25 @@ export type FoodItemType = {
     addedToInventory: number;
 }
 
+export enum FoodItemType {
+  inventoryItem,
+  dailyFoodItem,
+}
+
 type ComponentProps = {
-  foodItem: FoodItemType;
+  foodItem: FoodItem;
+  itemType: FoodItemType;
   navigation:  NativeStackNavigationProp<RootStackParamList>;
 }
 
 
-const FoodItem = (props: ComponentProps) => {
-    const { foodItem, navigation } = props;
+const FoodItemRow = (props: ComponentProps) => {
+    const { foodItem, itemType, navigation } = props;
     const {name, brand, serving_qty, serving_unit, calories, image, num_servings} = foodItem;
     const foodContext = useContext(FoodContext);
 
     const onRemoveFood = () => {
+      FoodItemFirestoreService.deleteFoodItem(foodItem);
       foodContext.foodContextDispatch({
         type: FoodContextActionTypes.DeleteFood,
         payload: props.foodItem,
@@ -42,6 +50,7 @@ const FoodItem = (props: ComponentProps) => {
     };
 
     const onEatFood = () => {
+      FoodItemFirestoreService.eatFoodItem(foodItem);
       foodContext.foodContextDispatch({
         type: FoodContextActionTypes.EatFood,
         payload: props.foodItem,
@@ -64,12 +73,12 @@ const FoodItem = (props: ComponentProps) => {
           <Text style={styles.info}>{brand}, {num_servings * serving_qty} {serving_unit}</Text>
           <Text style={styles.calories}>{calories * num_servings} cals</Text>
         </View>
-        <View style={{marginRight: 10}}>
-          <Ionicons
+        <View style={{marginRight: 10, justifyContent: 'center'}}>
+          {itemType === FoodItemType.inventoryItem && <Ionicons
             onPress={() => onEatFood()}
             name="fast-food-outline"
             size={32}
-          />
+          />}
           <Ionicons
             onPress={() => onRemoveFood()}
             name="trash-bin-outline" 
@@ -117,4 +126,4 @@ const styles = StyleSheet.create({
   });
   
 
-export default FoodItem;
+export default FoodItemRow;

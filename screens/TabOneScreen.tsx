@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { FoodItemType } from '../components/FoodItem';
 
 export type RootStackParamList = {
   TabTwo: undefined;
@@ -36,6 +37,7 @@ const TabOneScreen = ( {navigation, route }: ComponentProps) => {
   return (
     <View style={styles.container}>
       <MyFoodsList 
+        itemType={FoodItemType.inventoryItem}
         foodItemList={
           foodContext.foodInventoryState ? 
             Object.values(foodContext.foodInventoryState)

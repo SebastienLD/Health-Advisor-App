@@ -1,5 +1,5 @@
 import { createContext, Dispatch } from 'react';
-import { FoodItemType } from '../components/FoodItem';
+import { FoodItem } from '../components/FoodItem';
 import { FoodAction } from './foodContextReducer';
 
 const mockfoodInventoryState = {
@@ -20,7 +20,7 @@ const mockfoodInventoryState = {
 }
 
 type foodInventoryState = {
-  [foodItemId: string]: FoodItemType;
+  [foodItemId: string]: FoodItem;
 }
 
 export type FoodContextType = {
