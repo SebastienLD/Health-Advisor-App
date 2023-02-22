@@ -33,6 +33,7 @@ const ConfirmFood = (props: ComponentProps) => {
 	useEffect(() => {
 		if (receivedResponse && foodItem) {
 			setConfirmedFoodItem(foodItem);
+			setNumServings(String(foodItem.num_servings))
 		}
 	}, [receivedResponse, foodItem]);
 
@@ -67,7 +68,7 @@ const ConfirmFood = (props: ComponentProps) => {
 					/>
 				</View>
 				<View style={{flexDirection: "row", display: "flex", justifyContent: "space-between"}}>
-					<Text style={{top: 15}}>Number of servings {confirmedFoodItem.serving_qty.toFixed(2)} {confirmedFoodItem.serving_unit} ea.)</Text>
+					<Text style={{top: 15}}>Number of servings {confirmedFoodItem.serving_qty.toFixed(2)} {confirmedFoodItem.serving_unit} ea.</Text>
 					<View style={styles.input}>
 						<TextInput
 							style={{textAlign: "right"}}
