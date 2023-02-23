@@ -13,6 +13,8 @@ import {
     where,
     QuerySnapshot,
     DocumentData,
+    DocumentReference,
+    QueryDocumentSnapshot,
  } from "firebase/firestore"; 
 import { FoodItem } from '../components/FoodItem';
 
@@ -100,9 +102,20 @@ const FoodItemFirestoreService = {
         console.log("Deleted document from food inventory, moving to daily");
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const todayDoc = await addDoc(collection(db, DAILY_FOODS_COLLECTION), {date: Timestamp.fromDate(today)});
-        console.log("Added daily food doc");
-        await addDoc(collection(db, `${DAILY_FOODS_COLLECTION}/${todayDoc.id}/${DAILY_FOODS_SUB_COLLECTION}`), foodItem);
+        const queryDocs = await getDocs(query(
+            collection(db, DAILY_FOODS_COLLECTION),
+            where("date", "==", Timestamp.fromDate(today)
+        )));
+        if (!queryDocs.empty) {
+            let promises: Array<Promise<DocumentData>> = [];
+            queryDocs.forEach((doc) => {
+                promises.concat([addDoc(collection(db, `${DAILY_FOODS_COLLECTION}/${doc.id}/${DAILY_FOODS_SUB_COLLECTION}`), foodItem)]);
+            });
+            await Promise.all(promises);
+        } else {
+            const addedDoc = await addDoc(collection(db, DAILY_FOODS_COLLECTION), {date: Timestamp.fromDate(today)});
+            await addDoc(collection(db, `${DAILY_FOODS_COLLECTION}/${addedDoc.id}/${DAILY_FOODS_SUB_COLLECTION}`), foodItem);
+        }
         console.log("Added food item to daily food sub collection");
     },
 }

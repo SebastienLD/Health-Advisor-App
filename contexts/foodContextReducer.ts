@@ -36,7 +36,7 @@ export const foodContextReducer = (state: FoodContextType, action: FoodAction) =
       console.log("Got into the remove food case");
       next = {
         ...state,
-        foodInventoryState: (({[payload.foodItemId]: delted, ...o}) => o)(next.foodInventoryState)
+        foodInventoryState: (({[payload.foodItemId]: deleted, ...o}) => o)(next.foodInventoryState)
       }
       // delete next.foodInventoryState[payload.foodItemId];
       break;
@@ -54,7 +54,7 @@ export const foodContextReducer = (state: FoodContextType, action: FoodAction) =
       console.log("Got into the eat food case");
       next = {
         ...state,
-        foodInventoryState: (({[payload.foodItemId]: delted, ...o}) => o)(next.foodInventoryState),
+        foodInventoryState: (({[payload.foodItemId]: deleted, ...o}) => o)(next.foodInventoryState),
         dailyFoodState: {
           ...next.dailyFoodState,
           [payload.foodItemId]: payload,
