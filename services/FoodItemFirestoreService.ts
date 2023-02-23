@@ -11,6 +11,8 @@ import {
     doc,
     Timestamp,
     where,
+    QuerySnapshot,
+    DocumentData,
  } from "firebase/firestore"; 
 import { FoodItem } from '../components/FoodItem';
 
@@ -61,13 +63,19 @@ const FoodItemFirestoreService = {
     // TODO: THIS FUNCTION DOESN'T WORK QUITE RIGHT YET
     getTodaysDailyFoods: async () : Promise<Array<FoodItem>> => {
         let allFoodItems: Array<FoodItem> = [];
-        console.log("Trying to get today's daily foods");
-        const dailyFoodItemsDoc = await getDocs(query(collection(db, DAILY_FOODS_COLLECTION), where("date", "<=", Timestamp.fromDate(new Date()))));
-        dailyFoodItemsDoc.forEach(async (dailyDoc) => {
-            console.log("Found a specific daily doc with date: ", dailyDoc.data().date);
-            const foodItemDocs = await getDocs(query(collection(db, `${DAILY_FOODS_COLLECTION}/${dailyDoc.id}/${DAILY_FOODS_SUB_COLLECTION}`)));
-            foodItemDocs.forEach((foodItemDoc) => {
-                console.log("Found a specific food inside the daily doc", foodItemDoc.data().name);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const dailyFoodItemsDoc = await getDocs(query(
+            collection(db, DAILY_FOODS_COLLECTION),
+            where("date", "==", Timestamp.fromDate(today)
+        )));
+        let foodDocPromises: Array<Promise<QuerySnapshot<DocumentData>>> = [];
+        dailyFoodItemsDoc.forEach((dailyFoodDoc) => {
+            foodDocPromises = foodDocPromises.concat([getDocs(query(collection(db, `${DAILY_FOODS_COLLECTION}/${dailyFoodDoc.id}/${DAILY_FOODS_SUB_COLLECTION}`)))]);
+        })
+        const foodDocs = await Promise.all(foodDocPromises);
+        foodDocs.forEach((snapShot) => {
+            snapShot.forEach((foodItemDoc) => {
                 allFoodItems = allFoodItems.concat({
                     foodItemId: foodItemDoc.id,
                     name: foodItemDoc.data().name,
@@ -82,7 +90,7 @@ const FoodItemFirestoreService = {
                     carbs: foodItemDoc.data().carbs,
                     addedToInventory: foodItemDoc.data().addedToInventory,
                 });
-            });
+            })
         });
         return allFoodItems;
     },
@@ -90,7 +98,9 @@ const FoodItemFirestoreService = {
         // first delete the food item from the inventory
         await deleteDoc(doc(db, FOOD_INVENTORY_COLLECTION, foodItem.foodItemId));
         console.log("Deleted document from food inventory, moving to daily");
-        const todayDoc = await addDoc(collection(db, DAILY_FOODS_COLLECTION), {date: Timestamp.fromDate(new Date())});
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayDoc = await addDoc(collection(db, DAILY_FOODS_COLLECTION), {date: Timestamp.fromDate(today)});
         console.log("Added daily food doc");
         await addDoc(collection(db, `${DAILY_FOODS_COLLECTION}/${todayDoc.id}/${DAILY_FOODS_SUB_COLLECTION}`), foodItem);
         console.log("Added food item to daily food sub collection");
