@@ -13,7 +13,7 @@ import { FoodItem } from '../components/FoodItem';
 
 // Add a new document with a generated id.
 
-const FOOD_INVENTORY_COLLECTION = "foodInvetory";
+const FOOD_INVENTORY_COLLECTION = "foodInventory";
 
 const FoodItemFirestoreService = {
     
