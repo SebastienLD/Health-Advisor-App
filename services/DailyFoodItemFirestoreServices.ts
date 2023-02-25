@@ -3,27 +3,27 @@ import {
     collection,
     addDoc,
     getDocs,
-    orderBy,
     query,
-    setDoc,
     deleteDoc,
     doc,
     Timestamp,
     where,
-    QuerySnapshot,
-    DocumentData,
     updateDoc,
-    arrayUnion
+    arrayUnion,
+    arrayRemove
  } from "firebase/firestore"; 
 import { FoodItem } from '../components/FoodItem';
 
 // Add a new document with a generated id.
 
-const FOOD_INVENTORY_COLLECTION = "foodInvetory";
+const FOOD_INVENTORY_COLLECTION = "foodInventory";
 const DAILY_FOODS_COLLECTION = "dailyFoods";
 
 const DailyFoodItemFirestoreService = {
-    
+    /**
+     * Deletes a food item from invenotry and adds it to todays dailyFood foodAte field
+     * @param foodItem 
+     */
     eatFoodItem: async (foodItem: FoodItem) => {
         // first delete the food item from the inventory
         await deleteDoc(doc(db, FOOD_INVENTORY_COLLECTION, foodItem.foodItemId));
@@ -70,6 +70,28 @@ const DailyFoodItemFirestoreService = {
         })
         
         return allFoodItems;
+    },
+
+    /**
+     * Removes a food item from the AteFood field in dailyFoods doc
+     * @returns 
+     */
+    removeDailyFoodItem: async (foodItem: FoodItem) => {
+        const today = new Date();
+        const queryDocs = await getDocs(query(
+            collection(db, DAILY_FOODS_COLLECTION),
+            where("date", "==", Timestamp.fromDate(today)
+        )));
+        
+        queryDocs.forEach((doc) => {
+            // doc.data() is never undefined for query doc snapshots
+            const ref = doc.ref
+            updateDoc(ref, 
+                {
+                    foodAte: arrayRemove(foodItem)
+                })
+          });
+        
     },
 
 }
