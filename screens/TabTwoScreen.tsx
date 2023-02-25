@@ -7,7 +7,7 @@ import MyFoodsList from '../components/MyFoodsList';
 import { RootStackParamList } from './TabOneScreen';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FoodItemType } from '../components/FoodItem';
-import FoodItemFirestoreService from '../services/FoodItemFirestoreService copy';
+import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
 import DailyFoodItemFirestoreService from '../services/DailyFoodItemFirestoreServices';
 
 type ComponentProps = NativeStackScreenProps<RootStackParamList>;
