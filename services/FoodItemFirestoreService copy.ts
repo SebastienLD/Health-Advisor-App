@@ -7,14 +7,11 @@ import {
     query,
     setDoc,
     deleteDoc,
-    getDoc,
     doc,
     Timestamp,
     where,
     QuerySnapshot,
     DocumentData,
-    DocumentReference,
-    QueryDocumentSnapshot,
  } from "firebase/firestore"; 
 import { FoodItem } from '../components/FoodItem';
 
@@ -25,6 +22,8 @@ const DAILY_FOODS_COLLECTION = "dailyFoods";
 const DAILY_FOODS_SUB_COLLECTION = "dailyFoodItems";
 
 const FoodItemFirestoreService = {
+    
+
     uploadFoodItem: async (foodItem: FoodItem) => {
         const docRef = await addDoc(collection(db, FOOD_INVENTORY_COLLECTION), foodItem);
         console.log("Document written with ID: ", docRef.id);

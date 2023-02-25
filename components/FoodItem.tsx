@@ -8,7 +8,7 @@ import { FoodContextActionTypes } from '../contexts/foodContextReducer';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../screens/TabOneScreen';
 import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
-
+import DailyFoodItemFirestoreService from '../services/DailyFoodItemFirestoreServices';
 export type FoodItem = {
     foodItemId: string;
     name: string;
@@ -50,7 +50,7 @@ const FoodItemRow = (props: ComponentProps) => {
     };
 
     const onEatFood = () => {
-      FoodItemFirestoreService.eatFoodItem(foodItem);
+      DailyFoodItemFirestoreService.eatFoodItem(foodItem);
       foodContext.foodContextDispatch({
         type: FoodContextActionTypes.EatFood,
         payload: props.foodItem,
