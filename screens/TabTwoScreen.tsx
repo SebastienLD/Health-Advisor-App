@@ -15,25 +15,25 @@ type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 const TabTwoScreen = ({ navigation, route }: ComponentProps) => {
   const foodContext = useContext(FoodContext);
 
-  
-  const mockItem =  {
-    foodItemId: "mock-item",
-    name: "Trail Mix",
-    brand: "Kirkland",
-    serving_qty: 3,
-    serving_unit: 'ounces',
-    num_servings: 1,
-    calories: 160,
-    protein: 9,
-    fat: 1,
-    carbs: 2,
-    image: require('../assets/images/TrailMix.jpeg'),
-    addedToInventory: 0,
-  }
+  // Dylan: This is here for easy firebase testing
+  // const mockItem =  {
+  //   foodItemId: "mock-item",
+  //   name: "Trail Mix",
+  //   brand: "Kirkland",
+  //   serving_qty: 3,
+  //   serving_unit: 'ounces',
+  //   num_servings: 1,
+  //   calories: 160,
+  //   protein: 9,
+  //   fat: 1,
+  //   carbs: 2,
+  //   image: require('../assets/images/TrailMix.jpeg'),
+  //   addedToInventory: 0,
+  // }
 
-  const firebaseTest = (() => {
-    FoodItemFirestoreService.uploadFoodItem(mockItem)
-  })
+  // const firebaseTest = (() => {
+  //   FoodItemFirestoreService.uploadFoodItem(mockItem)
+  // })
 
   useEffect(() => {
     const fillFoodContext = async () => {
@@ -51,12 +51,12 @@ const TabTwoScreen = ({ navigation, route }: ComponentProps) => {
   return (
   
     <View style={styles.container}>
-      <Button
+      {/* <Button
         onPress={firebaseTest}
         title="Learn More"
         color="#841584"
         accessibilityLabel="Learn more about this purple button"
-      />
+      /> */}
       <MyFoodsList
         itemType={FoodItemType.dailyFoodItem}
         foodItemList={
