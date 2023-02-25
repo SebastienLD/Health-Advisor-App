@@ -10,4 +10,4 @@ Local Dev Steps:
 
 3. npm install
 
-4. npm run ios
+4. npm run ios or alternatively npm start ios
