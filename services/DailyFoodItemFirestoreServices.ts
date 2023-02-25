@@ -35,7 +35,6 @@ const DailyFoodItemFirestoreService = {
             collection(db, DAILY_FOODS_COLLECTION),
             where("date", "==", Timestamp.fromDate(today)
         )));
-        
         if(queryDocs.empty) {
             const ref = await addDoc(collection(db, DAILY_FOODS_COLLECTION), {date: Timestamp.fromDate(today)});
             updateDoc(ref, 
@@ -57,7 +56,7 @@ const DailyFoodItemFirestoreService = {
     },
 
     getTodaysDailyFoods: async () : Promise<Array<FoodItem>> => {
-        const allFoodItems: Array<FoodItem> = [];
+        let allFoodItems: Array<FoodItem> = [];
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const dailyFoodItemDocs = await getDocs(query(
@@ -66,9 +65,11 @@ const DailyFoodItemFirestoreService = {
         )));
         
         dailyFoodItemDocs.forEach((doc) => {
-            allFoodItems.concat(doc.data().foodAte)
+            console.log("HERE")
+            console.log(doc.data().foodAte)
+            allFoodItems = allFoodItems.concat(doc.data().foodAte)
         })
-        
+        console.log(allFoodItems)
         return allFoodItems;
     },
 
