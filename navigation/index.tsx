@@ -18,6 +18,7 @@ import TabTwoScreen from '../screens/TabTwoScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import EditFoodScreen from '../screens/EditFoodScreen';
+import ProfilePageScreen from '../screens/ProfilePageScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -46,6 +47,9 @@ function RootNavigator() {
           }}/>
           <Stack.Screen name="EditFoodScreen" component={EditFoodScreen} options={{
             title: 'Edit Food',
+          }}/>
+          <Stack.Screen name="ProfilePageScreen" component={ProfilePageScreen} options={{
+            title: 'Profile Page',
           }}/>
         </Stack.Group>
       </Stack.Navigator>
@@ -87,7 +91,20 @@ function BottomTabNavigator() {
                 />
             </Pressable>
           ),
-        })}
+          headerLeft: () => (
+            <Pressable
+              onPress={() => navigation.navigate('ProfilePageScreen')}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}>
+                <FontAwesome
+                  name="user-circle"
+                  size={25}
+                  color={Colors[colorScheme].text}
+                  style={{ marginLeft: 15 }}
+                />
+            </Pressable>
+        )})}
       />
       <BottomTab.Screen
         name="TabTwo"

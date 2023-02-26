@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 import { View } from '../components/Themed';
 import MyFoodsList from '../components/MyFoodsList';
-import {FoodContext} from '../contexts/foodsContext';
+import {GlobalContext} from '../contexts/globalContext';
 import { useEffect } from 'react';
 import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
@@ -18,14 +18,13 @@ export type RootStackParamList = {
 type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 
 const TabOneScreen = ( {navigation, route }: ComponentProps) => {
-  const foodContext = useContext(FoodContext);
-  console.log(foodContext);
+  const globalContext = useContext(GlobalContext);
 
   useEffect(() => {
     const fillFoodContext = async () => {
       const foodItems = await FoodItemFirestoreService.getAllFoodItems();
       foodItems.forEach((foodItem) => {
-        foodContext.foodContextDispatch({
+        globalContext.foodContextDispatch({
           type: FoodContextActionTypes.AddFood,
           payload: foodItem,
         });
@@ -39,8 +38,8 @@ const TabOneScreen = ( {navigation, route }: ComponentProps) => {
       <MyFoodsList 
         itemType={FoodItemType.inventoryItem}
         foodItemList={
-          foodContext.foodInventoryState ? 
-            Object.values(foodContext.foodInventoryState)
+          globalContext.foodInventoryState ? 
+            Object.values(globalContext.foodInventoryState)
             : []
           }
         navigation={navigation}

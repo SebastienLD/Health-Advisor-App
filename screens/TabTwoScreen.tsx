@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react';
 import { StyleSheet, Button } from 'react-native';
 import { View } from '../components/Themed';
-import { FoodContext } from '../contexts/foodsContext';
+import { GlobalContext } from '../contexts/globalContext';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
 import MyFoodsList from '../components/MyFoodsList';
 import { RootStackParamList } from './TabOneScreen';
@@ -13,7 +13,7 @@ import DailyFoodItemFirestoreService from '../services/DailyFoodItemFirestoreSer
 type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 
 const TabTwoScreen = ({ navigation, route }: ComponentProps) => {
-  const foodContext = useContext(FoodContext);
+  const globalContext = useContext(GlobalContext);
 
   // Dylan: This is here for easy firebase testing
   // const mockItem =  {
@@ -39,7 +39,7 @@ const TabTwoScreen = ({ navigation, route }: ComponentProps) => {
     const fillFoodContext = async () => {
       const foodItems = await DailyFoodItemFirestoreService.getTodaysDailyFoods();
       foodItems.forEach((foodItem) => {
-        foodContext.foodContextDispatch({
+        globalContext.foodContextDispatch({
           type: FoodContextActionTypes.AddDailyFood,
           payload: foodItem,
         });
@@ -60,8 +60,8 @@ const TabTwoScreen = ({ navigation, route }: ComponentProps) => {
       <MyFoodsList
         itemType={FoodItemType.dailyFoodItem}
         foodItemList={
-          foodContext.dailyFoodState ? 
-            Object.values(foodContext.dailyFoodState)
+          globalContext.dailyFoodState ? 
+            Object.values(globalContext.dailyFoodState)
             : []
           }
         navigation={navigation}

@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { Text, View } from './Themed';
 import { StyleSheet, Image, ImageSourcePropType, Pressable } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { FoodContext } from '../contexts/foodsContext';
+import { GlobalContext } from '../contexts/globalContext';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../screens/TabOneScreen';
@@ -39,11 +39,11 @@ type ComponentProps = {
 const FoodItemRow = (props: ComponentProps) => {
     const { foodItem, itemType, navigation } = props;
     const {name, brand, serving_qty, serving_unit, calories, image, num_servings} = foodItem;
-    const foodContext = useContext(FoodContext);
+    const globalContext = useContext(GlobalContext);
 
     const onRemoveFood = () => {
       FoodItemFirestoreService.deleteFoodItem(foodItem);
-      foodContext.foodContextDispatch({
+      globalContext.foodContextDispatch({
         type: FoodContextActionTypes.DeleteFood,
         payload: props.foodItem,
       });
@@ -51,7 +51,7 @@ const FoodItemRow = (props: ComponentProps) => {
 
     const onEatFood = () => {
       DailyFoodItemFirestoreService.eatFoodItem(foodItem);
-      foodContext.foodContextDispatch({
+      globalContext.foodContextDispatch({
         type: FoodContextActionTypes.EatFood,
         payload: props.foodItem,
       })

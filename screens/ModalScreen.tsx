@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useReducer, useContext } from 'react';
 import { Text, View, StyleSheet, Pressable } from 'react-native';
 import { BarCodeScanner, BarCodeScannedCallback, BarCodeEventCallbackArguments, BarCodeEvent } from 'expo-barcode-scanner';
-import { FoodContext } from '../contexts/foodsContext';
+import { GlobalContext } from '../contexts/globalContext';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
 import ConfirmFood  from '../components/ConfirmFood';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -57,7 +57,7 @@ const ModalScreen = ( { navigation, route } : ComponentProps) => {
   const [scanned, setScanned] = useState(false);
   const [fullFoodResponse, setFullFoodResponse] = useState<FullFoodResponse>();
   const [receivedFoodResponse, setReceievedFoodResponse] = useState(false);
-  const foodContext = useContext(FoodContext);
+  const globalContext = useContext(GlobalContext);
 
   const queryNutritionIx = async (upc: string) => {
     const api = base_nutritionix_api + `?upc=${upc}`;
@@ -84,7 +84,7 @@ const ModalScreen = ( { navigation, route } : ComponentProps) => {
 
   const handleConfirmFood = (confirmedFoodItem: FoodItem) => {
     console.log("Clicked confirm button");
-    foodContext.foodContextDispatch({
+    globalContext.foodContextDispatch({
       type: FoodContextActionTypes.AddFood,
       payload: confirmedFoodItem
     });

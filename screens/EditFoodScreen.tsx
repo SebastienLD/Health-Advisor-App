@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { FoodContext } from '../contexts/foodsContext';
+import { GlobalContext } from '../contexts/globalContext';
 import { View, StyleSheet } from 'react-native';
 import ConfirmFood from '../components/ConfirmFood';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -16,12 +16,12 @@ type ComponentProps = NativeStackScreenProps<ParamList, "EditFoodScreen">;
 
 const EditFoodScreen = ( {navigation, route } : ComponentProps ) => {
 
-    const foodContext = useContext(FoodContext);
+    const globalContext = useContext(GlobalContext);
     const [foodItem, setFoodItem] = useState<FoodItem>();
 
     const handleConfirmFood = (confirmedFoodItem: FoodItem) => {
         console.log("Clicked confirm button");
-        foodContext.foodContextDispatch({
+        globalContext.foodContextDispatch({
           type: FoodContextActionTypes.EditFood,
           payload: confirmedFoodItem
         });
@@ -30,7 +30,7 @@ const EditFoodScreen = ( {navigation, route } : ComponentProps ) => {
       }
 
     useEffect(() => {
-        setFoodItem(foodContext.foodInventoryState[route.params.foodItemId]);
+        setFoodItem(globalContext.foodInventoryState[route.params.foodItemId]);
     }, []);
 
     return (
