@@ -17,6 +17,7 @@ export type RootStackParamList = {
   Root: NavigatorScreenParams<RootTabParamList> | undefined;
   Modal: undefined;
   EditFoodScreen: { foodItemId: string };
+  ProfilePageScreen: undefined;
   NotFound: undefined;
 };
 

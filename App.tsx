@@ -4,14 +4,16 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
-import { FoodContext, FoodContextType, initialFoodState } from './contexts/foodsContext';
+import { GlobalContext, GlobalContextType, initialGlobalState } from './contexts/globalContext';
 import { foodContextReducer } from './contexts/foodContextReducer';
 import { useReducer, useState } from 'react';
+import { userInfoReducer } from './contexts/userInfoReducers';
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
-  const [state, dispatch] = useReducer(foodContextReducer, initialFoodState);
+  const [foodState, foodDispatch] = useReducer(foodContextReducer, initialGlobalState);
+  const [userState, userDispatch] = useReducer(userInfoReducer, initialGlobalState);
 
   if (!isLoadingComplete) {
     return null;
@@ -19,14 +21,16 @@ export default function App() {
 
     return (
       <SafeAreaProvider>
-        <FoodContext.Provider value={{ 
-          foodInventoryState: state.foodInventoryState,
-          dailyFoodState: state.dailyFoodState,
-          foodContextDispatch: dispatch,
+        <GlobalContext.Provider value={{ 
+          foodInventoryState: foodState.foodInventoryState,
+          dailyFoodState: foodState.dailyFoodState,
+          foodContextDispatch: foodDispatch,
+          userInfo: userState.userInfo,
+          userInfoDispatch: userDispatch,
         }}>
           <Navigation colorScheme={colorScheme} />
           <StatusBar />
-        </FoodContext.Provider>
+        </GlobalContext.Provider>
       </SafeAreaProvider>
     );
   }

@@ -1,5 +1,5 @@
 import { FoodItem } from "../components/FoodItem";
-import { FoodContextType } from "./foodsContext";
+import { GlobalContextType } from "./globalContext";
 
 export enum FoodContextActionTypes {
   AddFood = 'ADD_FOOD',
@@ -15,7 +15,7 @@ export interface FoodAction {
 }
 
 // reducer function
-export const foodContextReducer = (state: FoodContextType, action: FoodAction) => {
+export const foodContextReducer = (state: GlobalContextType, action: FoodAction) => {
   const { type, payload } = action;
   console.log("Got into reducer... adding", payload);
   let next = state;
