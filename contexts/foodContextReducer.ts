@@ -1,5 +1,5 @@
-import { FoodItem } from "../components/FoodItem";
-import { GlobalContextType } from "./globalContext";
+import { FoodItem } from '../components/FoodItem';
+import { GlobalContextType } from './globalContext';
 
 export enum FoodContextActionTypes {
   AddFood = 'ADD_FOOD',
@@ -15,15 +15,18 @@ export interface FoodAction {
 }
 
 // reducer function
-export const foodContextReducer = (state: GlobalContextType, action: FoodAction) => {
+export const foodContextReducer = (
+  state: GlobalContextType,
+  action: FoodAction
+) => {
   const { type, payload } = action;
-  console.log("Got into reducer... adding", payload);
+  console.log('Got into reducer... adding', payload);
   let next = state;
-  console.log("Initially the state is: ", state);
+  console.log('Initially the state is: ', state);
   switch (type) {
     case FoodContextActionTypes.AddFood:
     case FoodContextActionTypes.EditFood:
-      console.log("Got into the add food case");
+      console.log('Got into the add food case');
       next = {
         ...state,
         foodInventoryState: {
@@ -33,15 +36,17 @@ export const foodContextReducer = (state: GlobalContextType, action: FoodAction)
       };
       break;
     case FoodContextActionTypes.DeleteFood:
-      console.log("Got into the remove food case");
+      console.log('Got into the remove food case');
       next = {
         ...state,
-        foodInventoryState: (({[payload.foodItemId]: deleted, ...o}) => o)(next.foodInventoryState)
-      }
+        foodInventoryState: (({ [payload.foodItemId]: deleted, ...o }) => o)(
+          next.foodInventoryState
+        ),
+      };
       // delete next.foodInventoryState[payload.foodItemId];
       break;
     case FoodContextActionTypes.AddDailyFood:
-      console.log("Got into the add daily food case");
+      console.log('Got into the add daily food case');
       next = {
         ...state,
         dailyFoodState: {
@@ -51,20 +56,22 @@ export const foodContextReducer = (state: GlobalContextType, action: FoodAction)
       };
       break;
     case FoodContextActionTypes.EatFood:
-      console.log("Got into the eat food case");
+      console.log('Got into the eat food case');
       next = {
         ...state,
-        foodInventoryState: (({[payload.foodItemId]: deleted, ...o}) => o)(next.foodInventoryState),
+        foodInventoryState: (({ [payload.foodItemId]: deleted, ...o }) => o)(
+          next.foodInventoryState
+        ),
         dailyFoodState: {
           ...next.dailyFoodState,
           [payload.foodItemId]: payload,
-        }
-      }
+        },
+      };
       break;
     default:
-      console.log("Incorrect action type was given");
+      console.log('Incorrect action type was given');
       break;
   }
-  console.log("Next is:", next);
+  console.log('Next is:', next);
   return next;
 };

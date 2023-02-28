@@ -52,6 +52,13 @@ const ProfilePageScreen = ( {navigation, route}: ComponentProps) => {
                     placeholder="User Name"
                 />
             </View>
+            <View
+                style={{
+                    borderBottomColor: 'black',
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    marginBottom: 10,
+                }}
+            />
             <View style={styles.row}>
                 <Text> Height </Text>
                 <TextInput 
@@ -81,7 +88,6 @@ const ProfilePageScreen = ( {navigation, route}: ComponentProps) => {
                     <Text style={{fontSize: 15}}>Save</Text>
                 </Pressable>
             </View>
-            <TextInput />
         </View>
     );
 
@@ -128,6 +134,11 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		padding: 10,
         backgroundColor: 'white',
+    },
+    line: {
+        borderBottomColor: 'black',
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        marginBottom: 10,
     }
 })
 
