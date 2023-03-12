@@ -8,6 +8,8 @@ Local Dev Steps:
 
 2. cd Health-Advisor-App
 
-3. npm install
+3. Create config.json file and add secrets
 
-4. npm run ios or alternatively npm start ios
+4. npm install
+
+5. npm run ios or alternatively npm start ios
