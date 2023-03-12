@@ -4,11 +4,12 @@ import { View } from '../components/Themed';
 import { GlobalContext } from '../contexts/globalContext';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
 import MyFoodsList from '../components/MyFoodsList';
-import { RootStackParamList } from './TabOneScreen';
+import { RootStackParamList } from '../types';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FoodItemType } from '../components/FoodItem';
 import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
 import DailyFoodItemFirestoreService from '../services/DailyFoodItemFirestoreServices';
+import LocalAsyncStorageService from '../services/LocalAsyncStorageService';
 
 type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 
@@ -37,13 +38,18 @@ const TabTwoScreen = ({ navigation, route }: ComponentProps) => {
 
   useEffect(() => {
     const fillFoodContext = async () => {
-      const foodItems = await DailyFoodItemFirestoreService.getTodaysDailyFoods();
-      foodItems.forEach((foodItem) => {
-        globalContext.foodContextDispatch({
-          type: FoodContextActionTypes.AddDailyFood,
-          payload: foodItem,
+      const localUserData = await LocalAsyncStorageService.getUserFromDisk();
+      if (localUserData) {
+        const foodItems = await DailyFoodItemFirestoreService.getTodaysDailyFoods(localUserData.userId);
+        foodItems.forEach((foodItem) => {
+          globalContext.foodContextDispatch({
+            type: FoodContextActionTypes.AddDailyFood,
+            payload: foodItem,
+          });
         });
-      });
+      } else {
+        navigation.navigate("ProfilePageScreen");
+      }
     }
     fillFoodContext();
   }, []);

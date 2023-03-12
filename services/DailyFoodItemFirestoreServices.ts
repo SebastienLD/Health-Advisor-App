@@ -34,12 +34,14 @@ const DailyFoodItemFirestoreService = {
     const queryDocs = await getDocs(
       query(
         collection(db, DAILY_FOODS_COLLECTION),
+        where('userId', '==', foodItem.userId),
         where('date', '==', Timestamp.fromDate(today))
       )
     );
     if (queryDocs.empty) {
       const ref = await addDoc(collection(db, DAILY_FOODS_COLLECTION), {
         date: Timestamp.fromDate(today),
+        userId: foodItem.userId,
       });
       updateDoc(ref, {
         foodAte: arrayUnion(foodItem),
@@ -56,13 +58,14 @@ const DailyFoodItemFirestoreService = {
     console.log('Added food item to daily food sub collection');
   },
 
-  getTodaysDailyFoods: async (): Promise<Array<FoodItem>> => {
+  getTodaysDailyFoods: async (userId: string): Promise<Array<FoodItem>> => {
     let allFoodItems: Array<FoodItem> = [];
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const dailyFoodItemDocs = await getDocs(
       query(
         collection(db, DAILY_FOODS_COLLECTION),
+        where('userId', '==', userId),
         where('date', '==', Timestamp.fromDate(today))
       )
     );
@@ -85,6 +88,7 @@ const DailyFoodItemFirestoreService = {
     const queryDocs = await getDocs(
       query(
         collection(db, DAILY_FOODS_COLLECTION),
+        where('userId', '==', foodItem.userId),
         where('date', '==', Timestamp.fromDate(today))
       )
     );

@@ -8,6 +8,7 @@ import {
   setDoc,
   deleteDoc,
   doc,
+  where,
 } from 'firebase/firestore';
 import { FoodItem } from '../components/FoodItem';
 
@@ -36,9 +37,10 @@ const FoodItemFirestoreService = {
     await deleteDoc(doc(db, FOOD_INVENTORY_COLLECTION, foodItem.foodItemId));
     console.log('Document deleted from firestore');
   },
-  getAllFoodItems: async (): Promise<Array<FoodItem>> => {
+  getAllFoodItems: async (userId: string): Promise<Array<FoodItem>> => {
     const queryFoodInvetory = query(
       collection(db, FOOD_INVENTORY_COLLECTION),
+      where('userId', '==', userId),
       orderBy('addedToInventory', 'desc')
     );
     const foodInventorySnapshot = await getDocs(queryFoodInvetory);
@@ -58,6 +60,7 @@ const FoodItemFirestoreService = {
         fat: doc.data().fat,
         carbs: doc.data().carbs,
         addedToInventory: doc.data().addedToInventory,
+        userId: doc.data().userId,
       });
     });
     return allFoodItems;

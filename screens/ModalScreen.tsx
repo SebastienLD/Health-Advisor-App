@@ -138,6 +138,7 @@ const ModalScreen = ( { navigation, route } : ComponentProps) => {
           fat: fullFoodResponse.nf_total_fat,
           carbs: fullFoodResponse.nf_total_carbohydrate,
           addedToInventory: Date.now(),
+          userId: globalContext.userInfo.userId,
         } : undefined}
         handleConfirmFood={handleConfirmFood}
         scanned={scanned}

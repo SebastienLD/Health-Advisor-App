@@ -22,6 +22,7 @@ export type FoodItem = {
     fat: number;
     carbs: number;
     addedToInventory: number;
+    userId: string;
 }
 
 export enum FoodItemType {

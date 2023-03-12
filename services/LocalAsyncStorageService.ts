@@ -21,13 +21,14 @@ const LocalAsyncStorageService = {
     const strUserObj = JSON.stringify(userObj);
     try {
       await AsyncStorage.setItem(USER_DATA_KEY, strUserObj);
+      console.log('Successfully saved user to disk', strUserObj);
     } catch (e) {
       console.log('Saving user to disk failed: ', e);
     }
   },
   getUserFromDisk: async (): Promise<LocalUserData | null> => {
     try {
-      const jsonValue = await AsyncStorage.getItem('@storage_Key');
+      const jsonValue = await AsyncStorage.getItem(USER_DATA_KEY);
       return jsonValue != null ? JSON.parse(jsonValue) : null;
     } catch (e) {
       console.log('Error getting user data from disk: ', e);
