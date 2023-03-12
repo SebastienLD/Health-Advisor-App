@@ -4,22 +4,26 @@ import configData from '../config.json';
 const { Configuration, OpenAIApi } = require('openai');
 
 const OpenAIAPIService = {
-  getMealRecipe: async (calories: number, healthGoal: HealthGoal) => {
+  getMealRecipe: async (
+    calories: number,
+    healthGoal: HealthGoal
+  ): Promise<string> => {
+    const roundedCals = Math.round(calories);
     let gptMessage = '';
     switch (healthGoal) {
       case HealthGoal.gain_muscle:
         gptMessage = `
             Give me a good recipe for a meal that will help me build muscle.
-            It should have about ${calories} calories.
+            It should have about ${roundedCals} calories.
         `;
       case HealthGoal.lose_fat:
         gptMessage = `
         Give me a good recipe for a meal that will help me lose fat.
-        It should have about ${calories} calories.
+        It should have about ${roundedCals} calories.
             `;
       default:
         gptMessage = `
-            Give me a good recipe that has about ${calories} calories.
+            Give me a good recipe that has about ${roundedCals} calories.
         `;
     }
     gptMessage += `
