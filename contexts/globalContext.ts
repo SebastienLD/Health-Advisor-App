@@ -1,24 +1,27 @@
 import { createContext, Dispatch } from 'react';
 import { FoodItem } from '../components/FoodItem';
 import { FoodAction } from './foodContextReducer';
-import { BiologicalSex, UserInfo } from '../models/UserInfo';
+import { BiologicalSex, HealthGoal, UserInfo } from '../models/UserInfo';
 import { UserAction } from './userInfoReducers';
 
+const mockItem: FoodItem = {
+  foodItemId: 'mock-item',
+  name: 'Trail Mix',
+  brand: 'Kirkland',
+  serving_qty: 3,
+  serving_unit: 'ounces',
+  num_servings: 1,
+  calories: 160,
+  protein: 9,
+  fat: 1,
+  carbs: 2,
+  image: require('../assets/images/TrailMix.jpeg'),
+  addedToInventory: 0,
+  userId: 'MOCK_USER_ID',
+};
+
 const mockfoodInventoryState = {
-  'mock-item': {
-    foodItemId: 'mock-item',
-    name: 'Trail Mix',
-    brand: 'Kirkland',
-    serving_qty: 3,
-    serving_unit: 'ounces',
-    num_servings: 1,
-    calories: 160,
-    protein: 9,
-    fat: 1,
-    carbs: 2,
-    image: require('../assets/images/TrailMix.jpeg'),
-    addedToInventory: 0,
-  },
+  'mock-item': mockItem,
 };
 
 export const mockUserInfo: UserInfo = {
@@ -26,7 +29,9 @@ export const mockUserInfo: UserInfo = {
   userName: '',
   heightInInches: 65,
   biologicalSex: BiologicalSex.male,
-  dateOfBirth: new Date(),
+  weightInPounds: 150,
+  healthGoal: HealthGoal.maintain_weight,
+  targetMealsPerDay: 3,
 };
 
 type FoodInventoryState = {
