@@ -118,10 +118,23 @@ function BottomTabNavigator() {
       <BottomTab.Screen
         name="MealRecommendation"
         component={MealRecommendation}
-        options={{
+        options={({ navigation }: RootTabScreenProps<'MealRecommendation'>) => ({
           title: "Recommendations",
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-        }}
+          headerLeft: () => (
+            <Pressable
+              onPress={() => navigation.navigate('ProfilePageScreen')}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}>
+                <FontAwesome
+                  name="user-circle"
+                  size={25}
+                  color={Colors[colorScheme].text}
+                  style={{ marginLeft: 15 }}
+                />
+            </Pressable>
+          )})}
       />
     </BottomTab.Navigator>
   );
