@@ -19,6 +19,7 @@ import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../typ
 import LinkingConfiguration from './LinkingConfiguration';
 import EditFoodScreen from '../screens/EditFoodScreen';
 import ProfilePageScreen from '../screens/ProfilePageScreen';
+import MealRecommendation from '../screens/MealRecommendation';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -111,6 +112,14 @@ function BottomTabNavigator() {
         component={TabTwoScreen}
         options={{
           title: "Today's Foods",
+          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="MealRecommendation"
+        component={MealRecommendation}
+        options={{
+          title: "Recommendations",
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />

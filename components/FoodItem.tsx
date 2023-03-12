@@ -6,7 +6,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { GlobalContext } from '../contexts/globalContext';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../screens/TabOneScreen';
+import { RootStackParamList } from '../types';
 import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
 import DailyFoodItemFirestoreService from '../services/DailyFoodItemFirestoreServices';
 export type FoodItem = {

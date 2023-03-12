@@ -8,6 +8,7 @@ import { GlobalContext, GlobalContextType, initialGlobalState } from './contexts
 import { foodContextReducer } from './contexts/foodContextReducer';
 import { useReducer, useState } from 'react';
 import { userInfoReducer } from './contexts/userInfoReducers';
+import "react-native-url-polyfill/auto"
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
