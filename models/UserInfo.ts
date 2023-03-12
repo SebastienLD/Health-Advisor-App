@@ -3,11 +3,21 @@ export enum BiologicalSex {
   female = 'Female',
 }
 
+export enum HealthGoal {
+  gain_muscle = 'Gain Muscle',
+  lose_fat = 'Lose Fat',
+  maintain_weight = 'Maintain',
+}
+
 export type UserInfo = {
   userId: string;
   userName: string;
 
   heightInInches: number;
+  weightInPounds: number;
   biologicalSex: BiologicalSex;
-  dateOfBirth: Date;
+  // dateOfBirth: Date;
+
+  healthGoal: HealthGoal;
+  targetMealsPerDay: number;
 };

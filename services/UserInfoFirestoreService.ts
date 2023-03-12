@@ -2,7 +2,7 @@ import { db } from '../firebase/firebaseApp';
 import { getDoc, doc, collection, setDoc, addDoc } from 'firebase/firestore';
 import { UserInfo } from '../models/UserInfo';
 
-const USER_COLLECTION = 'users';
+const USER_COLLECTION = 'userInfo';
 
 const UserInfoFirestoreService = {
   /**
@@ -18,14 +18,18 @@ const UserInfoFirestoreService = {
       userName: userInfoDoc.data()?.userName,
       heightInInches: userInfoDoc.data()?.heightInInches,
       biologicalSex: userInfoDoc.data()?.biologicalSex,
-      dateOfBirth: userInfoDoc.data()?.dateOfBirth,
+      // dateOfBirth: userInfoDoc.data()?.dateOfBirth,
+      weightInPounds: userInfoDoc.data()?.weightInPounds,
+      healthGoal: userInfoDoc.data()?.healthGoal,
+      targetMealsPerDay: userInfoDoc.data()?.targetMealsPerDay,
     };
     return userInfo;
   },
-  setUserInfo: async (userInfo: UserInfo) => {
+  setUserInfo: async (userInfo: UserInfo): Promise<string> => {
     const ref = await addDoc(collection(db, USER_COLLECTION), userInfo);
     userInfo.userId = ref.id;
     UserInfoFirestoreService.editUserInfo(userInfo);
+    return userInfo.userId;
   },
   editUserInfo: async (userInfo: UserInfo) => {
     await setDoc(doc(db, USER_COLLECTION, userInfo.userId), userInfo);

@@ -8,12 +8,8 @@ import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FoodItemType } from '../components/FoodItem';
-
-export type RootStackParamList = {
-  TabTwo: undefined;
-  Modal: undefined;
-  EditFoodScreen: { foodItemId: string };
-};
+import LocalAsyncStorageService from '../services/LocalAsyncStorageService';
+import { RootStackParamList } from '../types';
 
 type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 
@@ -22,13 +18,18 @@ const TabOneScreen = ( {navigation, route }: ComponentProps) => {
 
   useEffect(() => {
     const fillFoodContext = async () => {
-      const foodItems = await FoodItemFirestoreService.getAllFoodItems();
-      foodItems.forEach((foodItem) => {
-        globalContext.foodContextDispatch({
-          type: FoodContextActionTypes.AddFood,
-          payload: foodItem,
+      const localUserData = await LocalAsyncStorageService.getUserFromDisk();
+      if (localUserData) {
+        const foodItems = await FoodItemFirestoreService.getAllFoodItems(localUserData.userId);
+        foodItems.forEach((foodItem) => {
+          globalContext.foodContextDispatch({
+            type: FoodContextActionTypes.AddFood,
+            payload: foodItem,
+          });
         });
-      });
+      } else {
+        navigation.navigate("ProfilePageScreen");
+      }
     }
     fillFoodContext();
   }, []);
