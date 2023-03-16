@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { StyleSheet } from 'react-native';
 import { View } from '../components/Themed';
 import MyFoodsList from '../components/MyFoodsList';
-import {GlobalContext} from '../contexts/globalContext';
+import { GlobalContext } from '../contexts/globalContext';
 import { useEffect } from 'react';
 import FoodItemFirestoreService from '../services/FoodItemFirestoreService';
 import { FoodContextActionTypes } from '../contexts/foodContextReducer';
@@ -13,41 +13,49 @@ import { RootStackParamList } from '../types';
 
 type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 
-const TabOneScreen = ( {navigation, route }: ComponentProps) => {
+const TabOneScreen = ({ navigation, route }: ComponentProps) => {
   const globalContext = useContext(GlobalContext);
 
-  useEffect(() => {
-    const fillFoodContext = async () => {
-      const localUserData = await LocalAsyncStorageService.getUserFromDisk();
-      if (localUserData) {
-        const foodItems = await FoodItemFirestoreService.getAllFoodItems(localUserData.userId);
-        foodItems.forEach((foodItem) => {
-          globalContext.foodContextDispatch({
-            type: FoodContextActionTypes.AddFood,
-            payload: foodItem,
-          });
+  const fillFoodContext = async () => {
+    const localUserData = await LocalAsyncStorageService.getUserFromDisk();
+    if (localUserData) {
+      const foodItems = await FoodItemFirestoreService.getAllFoodItems(
+        localUserData.userId
+      );
+      foodItems.forEach((foodItem) => {
+        globalContext.foodContextDispatch({
+          type: FoodContextActionTypes.AddFood,
+          payload: foodItem,
         });
-      } else {
-        navigation.navigate("ProfilePageScreen");
-      }
+      });
+    } else {
+      navigation.navigate('ProfilePageScreen');
     }
+  };
+
+  //update our food items every time we navigate to this screen
+  navigation.addListener('focus', async () => {
+    fillFoodContext();
+  });
+
+  useEffect(() => {
     fillFoodContext();
   }, []);
 
   return (
     <View style={styles.container}>
-      <MyFoodsList 
+      <MyFoodsList
         itemType={FoodItemType.inventoryItem}
         foodItemList={
-          globalContext.foodInventoryState ? 
-            Object.values(globalContext.foodInventoryState)
+          globalContext.foodInventoryState
+            ? Object.values(globalContext.foodInventoryState)
             : []
-          }
+        }
         navigation={navigation}
       />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
