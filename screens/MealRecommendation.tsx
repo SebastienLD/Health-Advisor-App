@@ -2,87 +2,61 @@ import { useState, useContext, useEffect } from 'react';
 import { View } from '../components/Themed';
 import { Text, StyleSheet, ScrollView } from 'react-native';
 import { GlobalContext } from '../contexts/globalContext';
-
-import OpenAIAPIService from '../services/OpenAIAPIService';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types';
-import { BiologicalSex, HealthGoal } from '../models/UserInfo';
+import MRS from "../services/MealRecommendationService";
+import { MealRecActionTypes } from '../contexts/mealRecReducers';
 
 type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 
 const MealRecommendation = ( {navigation, route}: ComponentProps) => {
-    const [mealRecs, setMealRecs] = useState<Array<string>>([]);
+    const [mealRecs, setMealRecs] = useState<Array<Array<string>>>([]);
     const [loading, setLoading] = useState(false);
     const globalContext = useContext(GlobalContext);
 
-    const calculateBMR = () => {
-        let BMR = 0;
-        const W = globalContext.userInfo.weightInPounds / 2.20462;
-        const H = globalContext.userInfo.heightInInches * 2.54;
-        const A = 30; // aproximate age to 30 for now
-        if (globalContext.userInfo.biologicalSex == BiologicalSex.female) {
-            BMR = 10 * W + 6.25 * H - 5 * A - 161;
-        } else if (globalContext.userInfo.biologicalSex == BiologicalSex.male) {
-            BMR = 10 * W + 6.25 * H - 5 * A + 5;
-        }
-        return BMR;
-    }
-
-    const getDailyCalorieGoal = () => {
-        const bmr = calculateBMR();
-        let plusMinus = bmr * 0.15; // base case is gain muscle
-        if (globalContext.userInfo.healthGoal == HealthGoal.lose_fat) {
-            plusMinus = plusMinus * -1;
-        } else if (globalContext.userInfo.healthGoal == HealthGoal.maintain_weight) {
-            plusMinus = 0;
-        }
-        return bmr + plusMinus;
-    }
-
-    const calculateCurrCalories = (): number => {
-        let calorieCount = 0;
-        Object.values(globalContext.dailyFoodState).forEach((foodItem) => {
-            if (foodItem.foodItemId != "mock-item") {
-                calorieCount += foodItem.calories;
-            }
-        })
-        return calorieCount;
-    }
-
-    const generateMealRecommendations = async () => {
-        const calorieGoal = getDailyCalorieGoal();
-        const calsPerMeal = calorieGoal / globalContext.userInfo.targetMealsPerDay;
-        const currEatenCalories = calculateCurrCalories();
-        let caloriesLeft = calorieGoal - currEatenCalories;
-        let mealRecommendationPromises: Array<Promise<string>> = [];
-        while (caloriesLeft > 0) {
-            let mealCals = caloriesLeft;
-            if (caloriesLeft > calsPerMeal) {
-                mealCals = calsPerMeal;
-            } 
-            const mealRec = OpenAIAPIService.getMealRecipe(mealCals, globalContext.userInfo.healthGoal);
-            mealRecommendationPromises.push(mealRec);
-            caloriesLeft -= mealCals;
-        }
-        const meals = await Promise.all(mealRecommendationPromises);
-        return meals;
-    }
-
     const handleGetResponse = async () => {
         try {
-            setLoading(true);
-            const mealRecs = await generateMealRecommendations();
-            setLoading(false);
-            setMealRecs(mealRecs);
+            globalContext.mealRecDispatch({
+                type: MealRecActionTypes.UpdateMealRecMatrix,
+                payload: {
+                    ...globalContext.mealRecState,
+                    fetchingRecs: true,
+                },
+            });
+            const mealRecs = await MRS.generateMealRecommendations(globalContext);
+            globalContext.mealRecDispatch({
+                type: MealRecActionTypes.UpdateMealRecMatrix,
+                payload: {
+                    fetchingRecs: false,
+                    mealRecommendationMatrix: mealRecs
+                },
+            });
         } catch (e) {
             console.log("Getting open ai response failed with", e);
         }
     }
+
+    useEffect(() => {
+        setLoading(globalContext.mealRecState.fetchingRecs);
+        setMealRecs(globalContext.mealRecState.mealRecommendationMatrix);
+    }, [globalContext.mealRecState])
     
     useEffect(() => {
         setMealRecs([]);
         handleGetResponse();
     }, [globalContext.dailyFoodState, globalContext.userInfo]);
+
+    const Border = () => {
+        return (
+          <View
+            style={{
+              borderBottomColor: 'black',
+              borderBottomWidth: StyleSheet.hairlineWidth,
+              marginBottom: 10,
+            }}
+          />
+        )
+    }
 
     return (
         <View style={{height: '100%'}}>
@@ -91,26 +65,41 @@ const MealRecommendation = ( {navigation, route}: ComponentProps) => {
                     Hi, {globalContext.userInfo.userName}
                 </Text>
                 <Text>
-                    You have {Math.round(getDailyCalorieGoal())} - {Math.round(calculateCurrCalories())} = {Math.round(getDailyCalorieGoal() - calculateCurrCalories())} calories left
+                    You have 
+                    {Math.round(MRS.getDailyCalorieGoal(globalContext))} 
+                    - {Math.round(MRS.calculateCurrCalories(globalContext))} 
+                    = {Math.round(MRS.getDailyCalorieGoal(globalContext) 
+                    - MRS.calculateCurrCalories(globalContext))} calories left
                 </Text>
                 <Text>
-                    Based on this, here are your {Math.ceil((getDailyCalorieGoal() - calculateCurrCalories()) / (getDailyCalorieGoal() / globalContext.userInfo.targetMealsPerDay))} next meals
+                    Based on this, here are your 
+                    {Math.ceil((MRS.getDailyCalorieGoal(globalContext) 
+                    - MRS.calculateCurrCalories(globalContext)) 
+                    / (MRS.getDailyCalorieGoal(globalContext) 
+                    / globalContext.userInfo.targetMealsPerDay))} next meals
                 </Text>
             </View>
-            <View
-                style={{
-                borderBottomColor: 'black',
-                borderBottomWidth: StyleSheet.hairlineWidth,
-                marginBottom: 10,
-                }}
-            />
+           <Border />
             <ScrollView style={styles.response}>
-                {loading && <Text>Updating your recommended recipes ...</Text>}
-                {mealRecs.map((mealRecommendation, index) => {
+                {loading && <Text>Updating your recommended recipes ... this may take a moment.</Text>}
+                {mealRecs.map((meal, mealIndex) => {
                     return (
-                        <View key={index}>
-                            <Text style={{fontSize: 20, fontWeight: '600'}}>{`Meal #${index+1}`}</Text>
-                            <Text style={{marginBottom: 10}}>{mealRecommendation}</Text>
+                        <View key={mealIndex}>
+                            <>
+                                <Text style={{fontSize: 20, fontWeight: '600'}}>{`Meal #${mealIndex+1}`}</Text>
+                                <View>
+                                    <Border />
+                                    <Text style={{fontSize: 16, fontWeight: '400'}}>{`Option #1`}</Text>
+                                    <Text style={{marginBottom: 10}}>{meal[0]}</Text>
+                                    <Border />
+                                    <Text style={{fontSize: 16, fontWeight: '400'}}>{`Option #2`}</Text>
+                                    <Text style={{marginBottom: 10}}>{meal[1]}</Text>
+                                    <Border />
+                                    <Text style={{fontSize: 16, fontWeight: '400'}}>{`Option #3`}</Text>
+                                    <Text style={{marginBottom: 10}}>{meal[2]}</Text>
+                                </View>
+                            </>
+                            <Border />
                         </View>
                     )
                 })}

@@ -73,7 +73,7 @@ const ProfilePageScreen = ({ navigation, route }: ComponentProps) => {
     }
   }, []);
 
-  const Boarder = () => {
+  const Border = () => {
     return (
       <View
         style={{
@@ -98,7 +98,7 @@ const ProfilePageScreen = ({ navigation, route }: ComponentProps) => {
           placeholder="User Name"
         />
       </View>
-     <Boarder/>
+     <Border/>
      <View style={styles.row}>
         <Text style={styles.rowTitle}> Height (inches) </Text>
         <SelectDropdown
@@ -114,7 +114,7 @@ const ProfilePageScreen = ({ navigation, route }: ComponentProps) => {
           defaultButtonText="Select"
         />
       </View>
-      <Boarder/>
+      <Border/>
       <View style={styles.row}>
         <Text style={styles.rowTitle}> Weight (lbs) </Text>
         <SelectDropdown
@@ -130,7 +130,7 @@ const ProfilePageScreen = ({ navigation, route }: ComponentProps) => {
           defaultButtonText="Select"
         />
       </View>
-      <Boarder/>
+      <Border/>
       <View style={styles.row}>
         <Text style={styles.rowTitle}> Biological Sex </Text>
         <SelectDropdown
@@ -146,7 +146,7 @@ const ProfilePageScreen = ({ navigation, route }: ComponentProps) => {
           defaultButtonText="Select"
         />
       </View>
-      <Boarder/>
+      <Border/>
       <View style={styles.row}>
         <Text style={styles.rowTitle}> Health Goal </Text>
         <SelectDropdown
@@ -162,7 +162,7 @@ const ProfilePageScreen = ({ navigation, route }: ComponentProps) => {
           defaultButtonText="Select"
         />
       </View>
-      <Boarder/>
+      <Border/>
       <View style={styles.row}>
         <Text style={styles.rowTitle}> Target # of Meals / Day </Text>
         <SelectDropdown
@@ -178,7 +178,7 @@ const ProfilePageScreen = ({ navigation, route }: ComponentProps) => {
           defaultButtonText="Select"
         />
       </View>
-      <Boarder/>
+      <Border/>
       <View style={{ alignItems: 'center', marginTop: 10 }}>
         <Pressable 
           style={styles.saveButton}

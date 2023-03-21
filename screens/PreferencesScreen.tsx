@@ -63,7 +63,7 @@ const PreferencesScreen = ({ navigation, route }: ComponentProps) => {
     }
   }, []);
 
-  const Boarder = () => {
+  const Border = () => {
     return (
       <View
         style={{
@@ -108,7 +108,7 @@ const PreferencesScreen = ({ navigation, route }: ComponentProps) => {
                 })
             }/>
         </View>
-        <Boarder/>
+        <Border/>
         <View style={styles.row}>
             <Text style={styles.rowTitle}>Gluten Intolerant</Text>
             <Checkbox value={dietPreferences.isGlutenFree} onValueChange={
@@ -118,7 +118,7 @@ const PreferencesScreen = ({ navigation, route }: ComponentProps) => {
                 })
             }/>
         </View>
-        <Boarder/>
+        <Border/>
         <View style={styles.row}>
             <Text style={styles.rowTitle}>Vegitarian</Text>
             <Checkbox value={dietPreferences.isVeg} onValueChange={
@@ -128,7 +128,7 @@ const PreferencesScreen = ({ navigation, route }: ComponentProps) => {
                 })
             }/>
         </View>
-        <Boarder/>
+        <Border/>
         <View style={styles.row}>
             <Text style={styles.rowTitle}>Kosher</Text>
             <Checkbox value={dietPreferences.isKosher} onValueChange={
@@ -138,7 +138,7 @@ const PreferencesScreen = ({ navigation, route }: ComponentProps) => {
                 })
             }/>
         </View>
-        <Boarder/>
+        <Border/>
         <View style={styles.row}>
             <Text style={styles.rowTitle}>Keto</Text>
             <Checkbox value={dietPreferences.isKeto} onValueChange={
@@ -148,7 +148,7 @@ const PreferencesScreen = ({ navigation, route }: ComponentProps) => {
                 })
             }/>
         </View>
-        <Boarder/>
+        <Border/>
         <View style={styles.row}>
             <Text style={styles.rowTitle}>Diabetes</Text>
             <Checkbox value={dietPreferences.hasDiabetes} onValueChange={
@@ -158,7 +158,7 @@ const PreferencesScreen = ({ navigation, route }: ComponentProps) => {
                 })
             }/>
         </View>
-        <Boarder/>
+        <Border/>
         <View style={styles.row}>
             <Text style={styles.rowTitle}>Dairy Free</Text>
             <Checkbox value={dietPreferences.isDairyFree} onValueChange={
@@ -168,7 +168,7 @@ const PreferencesScreen = ({ navigation, route }: ComponentProps) => {
                 })
             }/>
         </View>
-        <Boarder/>
+        <Border/>
         <View style={styles.row}>
             <Text style={styles.rowTitle}>Low Carb</Text>
             <Checkbox value={dietPreferences.isLowCarb} onValueChange={
@@ -178,7 +178,7 @@ const PreferencesScreen = ({ navigation, route }: ComponentProps) => {
                 })
             }/>
         </View>
-        <Boarder/>
+        <Border/>
         <View style={{ alignItems: 'center', marginTop: 10 }}>
             <Pressable 
             style={styles.saveButton}
