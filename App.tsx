@@ -4,9 +4,9 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
-import { GlobalContext, GlobalContextType, initialGlobalState } from './contexts/globalContext';
+import { GlobalContext, initialGlobalState } from './contexts/globalContext';
 import { foodContextReducer } from './contexts/foodContextReducer';
-import { useReducer, useState } from 'react';
+import { useReducer } from 'react';
 import { userInfoReducer } from './contexts/userInfoReducers';
 import "react-native-url-polyfill/auto"
 
