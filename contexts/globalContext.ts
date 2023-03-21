@@ -8,6 +8,7 @@ import {
   UserInfo,
 } from '../models/UserInfo';
 import { UserAction } from './userInfoReducers';
+import { MealRecAction, MealRecommendationMatrix } from './mealRecReducers';
 
 const mockItem: FoodItem = {
   foodItemId: 'mock-item',
@@ -55,6 +56,11 @@ type FoodInventoryState = {
   [foodItemId: string]: FoodItem;
 };
 
+export type MealRecState = {
+  fetchingRecs: boolean;
+  mealRecommendationMatrix: MealRecommendationMatrix;
+};
+
 export type GlobalContextType = {
   // food related
   foodInventoryState: FoodInventoryState;
@@ -64,6 +70,10 @@ export type GlobalContextType = {
   // user related
   userInfo: UserInfo;
   userInfoDispatch: Dispatch<UserAction>;
+
+  // meal recommendations
+  mealRecState: MealRecState;
+  mealRecDispatch: Dispatch<MealRecAction>;
 };
 
 export const initialGlobalState = {
@@ -74,6 +84,13 @@ export const initialGlobalState = {
   },
   userInfo: mockUserInfo,
   userInfoDispatch: (value: UserAction) => {
+    return;
+  },
+  mealRecState: {
+    mealRecommendationMatrix: [],
+    fetchingRecs: false,
+  },
+  mealRecDispatch: (value: MealRecAction) => {
     return;
   },
 };

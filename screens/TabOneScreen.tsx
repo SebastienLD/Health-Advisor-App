@@ -12,6 +12,8 @@ import LocalAsyncStorageService from '../services/LocalAsyncStorageService';
 import { RootStackParamList } from '../types';
 import UserInfoFirestoreService from '../services/UserInfoFirestoreService';
 import { UserInfoActionTypes } from '../contexts/userInfoReducers';
+import MRS from '../services/MealRecommendationService';
+import { MealRecActionTypes } from '../contexts/mealRecReducers';
 
 type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 
@@ -39,6 +41,26 @@ const TabOneScreen = ({ navigation, route }: ComponentProps) => {
         type: UserInfoActionTypes.UpdateUserInfo,
         payload: userInfo,
       });
+
+      // then start making recommendations
+      if (!globalContext.mealRecState.fetchingRecs) {
+        globalContext.mealRecDispatch({
+          type: MealRecActionTypes.UpdateMealRecMatrix,
+          payload: {
+            ...globalContext.mealRecState,
+            fetchingRecs: true,
+          },
+        });
+        const mealRecs = await MRS.generateMealRecommendations(globalContext);
+        globalContext.mealRecDispatch({
+          type: MealRecActionTypes.UpdateMealRecMatrix,
+          payload: {
+            mealRecommendationMatrix: mealRecs,
+            fetchingRecs: false,
+          },
+        });
+      }
+
     } else {
       navigation.navigate('ProfilePageScreen');
     }

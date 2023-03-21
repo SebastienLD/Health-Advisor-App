@@ -1,4 +1,4 @@
-import { HealthGoal } from '../models/UserInfo';
+import { HealthGoal, UserDietPreferences } from '../models/UserInfo';
 import configData from '../config.json';
 
 const { Configuration, OpenAIApi } = require('openai');
@@ -27,9 +27,24 @@ const OpenAIAPIService = {
         `;
     }
     gptMessage += `
-        Please begin the response by breaking down the 
-        nutrition of this recipe, including how many calories it is,
-        and the macro nutrietns, such as protein, fats, and carbohydrates
+        Please give me a response in the following format, filling in the {}:
+
+        Calories: {},
+        Nutrients:
+          - Protein: {},
+          - Carbohydrates: {},
+          - Fats: {},
+        Dietery Preferences:
+          - Lactose Free: {},
+          - Gluten Free: {},
+          - Vegetarian: {},
+          - Kosher: {},
+          - Keto: {},
+          - Good for diabetes: {},
+          - Low carbohydrates: {}
+
+          Recipe Ingredients: {},
+          Recipe Instructions: {},
     `;
     const configuration = new Configuration({
       apiKey: configData.OPENAI_API_KEY,
