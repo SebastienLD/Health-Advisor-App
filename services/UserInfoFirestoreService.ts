@@ -1,6 +1,7 @@
 import { db } from '../firebase/firebaseApp';
 import { getDoc, doc, collection, setDoc, addDoc } from 'firebase/firestore';
 import { UserInfo } from '../models/UserInfo';
+import { defaultDietPreferences } from '../contexts/globalContext';
 
 const USER_COLLECTION = 'userInfo';
 
@@ -22,6 +23,8 @@ const UserInfoFirestoreService = {
       weightInPounds: userInfoDoc.data()?.weightInPounds,
       healthGoal: userInfoDoc.data()?.healthGoal,
       targetMealsPerDay: userInfoDoc.data()?.targetMealsPerDay,
+      dietPreferences:
+        userInfoDoc.data()?.dietPreferences || defaultDietPreferences,
     };
     return userInfo;
   },

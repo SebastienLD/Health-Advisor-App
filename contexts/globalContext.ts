@@ -1,7 +1,12 @@
 import { createContext, Dispatch } from 'react';
 import { FoodItem } from '../components/FoodItem';
 import { FoodAction } from './foodContextReducer';
-import { BiologicalSex, HealthGoal, UserInfo } from '../models/UserInfo';
+import {
+  BiologicalSex,
+  HealthGoal,
+  UserDietPreferences,
+  UserInfo,
+} from '../models/UserInfo';
 import { UserAction } from './userInfoReducers';
 
 const mockItem: FoodItem = {
@@ -24,6 +29,17 @@ const mockfoodInventoryState = {
   'mock-item': mockItem,
 };
 
+export const defaultDietPreferences: UserDietPreferences = {
+  isLactoseIntolerant: false,
+  isGlutenFree: false,
+  isVeg: false,
+  isKosher: false,
+  isKeto: false,
+  hasDiabetes: false,
+  isDairyFree: false,
+  isLowCarb: false,
+};
+
 export const mockUserInfo: UserInfo = {
   userId: 'MOCK_USER_ID',
   userName: '',
@@ -32,6 +48,7 @@ export const mockUserInfo: UserInfo = {
   weightInPounds: 150,
   healthGoal: HealthGoal.maintain_weight,
   targetMealsPerDay: 3,
+  dietPreferences: defaultDietPreferences,
 };
 
 type FoodInventoryState = {
