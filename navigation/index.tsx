@@ -28,6 +28,7 @@ import LinkingConfiguration from './LinkingConfiguration';
 import EditFoodScreen from '../screens/EditFoodScreen';
 import ProfilePageScreen from '../screens/ProfilePageScreen';
 import MealRecommendation from '../screens/MealRecommendation';
+import PreferencesScreen from '../screens/PreferencesScreen';
 
 export default function Navigation({
   colorScheme,
@@ -83,6 +84,13 @@ function RootNavigator() {
           component={ProfilePageScreen}
           options={{
             title: 'Profile Page',
+          }}
+        />
+        <Stack.Screen
+          name="PreferencesScreen"
+          component={PreferencesScreen}
+          options={{
+            title: 'Dietary Preferences',
           }}
         />
       </Stack.Group>
@@ -186,6 +194,21 @@ function BottomTabNavigator() {
                 size={25}
                 color={Colors[colorScheme].text}
                 style={{ marginLeft: 15 }}
+              />
+            </Pressable>
+          ),
+          headerRight: () => (
+            <Pressable
+              onPress={() => navigation.navigate('PreferencesScreen')}
+              style={({ pressed }) => ({
+                opacity: pressed ? 0.5 : 1,
+              })}
+            >
+              <FontAwesome
+                name="cog"
+                size={25}
+                color={Colors[colorScheme].text}
+                style={{ marginRight: 15 }}
               />
             </Pressable>
           ),

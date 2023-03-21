@@ -19,6 +19,7 @@ export type RootStackParamList = {
   EditFoodScreen: { foodItemId: string };
   ProfilePageScreen: undefined;
   NotFound: undefined;
+  PreferencesScreen: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> = NativeStackScreenProps<

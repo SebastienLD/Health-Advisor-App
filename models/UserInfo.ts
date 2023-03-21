@@ -9,6 +9,17 @@ export enum HealthGoal {
   maintain_weight = 'Maintain',
 }
 
+export type UserDietPreferences = {
+  isLactoseIntolerant: boolean;
+  isGlutenFree: boolean;
+  isVeg: boolean;
+  isKosher: boolean;
+  isKeto: boolean;
+  hasDiabetes: boolean;
+  isDairyFree: boolean;
+  isLowCarb: boolean;
+};
+
 export type UserInfo = {
   userId: string;
   userName: string;
@@ -20,4 +31,6 @@ export type UserInfo = {
 
   healthGoal: HealthGoal;
   targetMealsPerDay: number;
+
+  dietPreferences: UserDietPreferences;
 };
