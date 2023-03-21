@@ -10,6 +10,8 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FoodItemType } from '../components/FoodItem';
 import LocalAsyncStorageService from '../services/LocalAsyncStorageService';
 import { RootStackParamList } from '../types';
+import UserInfoFirestoreService from '../services/UserInfoFirestoreService';
+import { UserInfoActionTypes } from '../contexts/userInfoReducers';
 
 type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 
@@ -27,6 +29,15 @@ const TabOneScreen = ({ navigation, route }: ComponentProps) => {
           type: FoodContextActionTypes.AddFood,
           payload: foodItem,
         });
+      });
+
+      // get the user info early since we know the user id
+      const userInfo = await UserInfoFirestoreService.getUserInfo(
+        localUserData.userId
+      );
+      globalContext.userInfoDispatch({
+        type: UserInfoActionTypes.UpdateUserInfo,
+        payload: userInfo,
       });
     } else {
       navigation.navigate('ProfilePageScreen');
