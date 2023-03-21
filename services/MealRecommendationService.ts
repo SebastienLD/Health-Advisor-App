@@ -1,8 +1,15 @@
-import { GlobalContextType } from '../contexts/globalContext';
+import { GlobalContext, GlobalContextType } from '../contexts/globalContext';
 import { MealRecommendationMatrix } from '../contexts/mealRecReducers';
 import { BiologicalSex } from '../models/UserInfo';
 import { HealthGoal } from '../models/UserInfo';
 import OpenAIAPIService from '../services/OpenAIAPIService';
+
+const getFieldResponse = (field: string, response: string): string => {
+  const fieldIndex = response.indexOf(field);
+  const endIndex = response.indexOf(',', fieldIndex);
+  const startIndex = response.indexOf(':', fieldIndex);
+  return response.substring(startIndex + 1, endIndex).trim();
+};
 
 const MRS = {
   calculateBMR: (globalContext: GlobalContextType) => {
@@ -38,6 +45,64 @@ const MRS = {
     });
     return calorieCount;
   },
+  getUserDietPreferences: (globalContext: GlobalContextType) => {
+    const dietPreferences = globalContext.userInfo.dietPreferences;
+    return dietPreferences;
+  },
+  scoreMealRecommendation: (globalContext: GlobalContextType, mealRec: string): number => {
+    const dietPreferences = MRS.getUserDietPreferences(globalContext);
+    let score = 0;
+    if (dietPreferences.isLactoseIntolerant) {
+      const lactoseFree = getFieldResponse('Lactose Free', mealRec);
+      if (lactoseFree == 'Yes') {
+        score += 1;
+      }
+    }
+    if (dietPreferences.isGlutenFree) {
+      const glutenFree = getFieldResponse('Gluten Free', mealRec);
+      if (glutenFree == 'Yes') {
+        score += 1;
+      }
+    }
+    if (dietPreferences.isVeg) {
+      const vegetarian = getFieldResponse('Vegetarian', mealRec);
+      if (vegetarian == 'Yes') {
+        score += 1;
+      }
+    }
+    if (dietPreferences.isKosher) {
+      const kosher = getFieldResponse('Kosher', mealRec);
+      if (kosher == 'Yes') {
+        score += 1;
+      }
+    }
+    if (dietPreferences.isKeto) {
+      const keto = getFieldResponse('Keto', mealRec);
+      if (keto == 'Yes') {
+        score += 1;
+      }
+    }
+    if (dietPreferences.hasDiabetes) {
+      const diabetic = getFieldResponse('Good for diabetes', mealRec);
+      if (diabetic == 'Yes') {
+        score += 1;
+      }
+    }
+    if (dietPreferences.isDairyFree) {
+      const dairyFree = getFieldResponse('Dairy Free', mealRec);
+      if (dairyFree == 'Yes') {
+        score += 1;
+      }
+    }
+    if (dietPreferences.isLowCarb) {
+      const lowCarb = getFieldResponse('Low Carb', mealRec);
+      if (lowCarb == 'Yes') {
+        score += 1;
+      }
+    }
+    return score;
+  },
+
   generateMealRecommendations: async (
     globalContext: GlobalContextType
   ): Promise<MealRecommendationMatrix> => {
@@ -54,7 +119,7 @@ const MRS = {
       }
 
       const mealOptionPromises: Array<Promise<string>> = [];
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 5; i++) {
         mealOptionPromises.push(
           OpenAIAPIService.getMealRecipe(
             mealCals,
@@ -66,7 +131,16 @@ const MRS = {
       caloriesLeft -= mealCals;
       allMealRecOptions.push(mealOptions);
     }
-    console.log('The meal rec matrix is: ', allMealRecOptions);
+
+    allMealRecOptions.forEach((mealOptions) => {
+      mealOptions.sort((a, b) => {
+        const aScore = MRS.scoreMealRecommendation(globalContext, a);
+        const bScore = MRS.scoreMealRecommendation(globalContext, b);
+        return bScore - aScore;
+      });
+    });
+
+    console.log(allMealRecOptions)
     return allMealRecOptions;
   },
 };
