@@ -4,13 +4,14 @@ import { Text, StyleSheet, ScrollView } from 'react-native';
 import { GlobalContext } from '../contexts/globalContext';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types';
-import MRS from '../services/MealRecommendationService';
+import MRS, { MealRecObject } from '../services/MealRecommendationService';
 import { MealRecActionTypes } from '../contexts/mealRecReducers';
+import MealRec from '../components/MealRec';
 
 type ComponentProps = NativeStackScreenProps<RootStackParamList>;
 
 const MealRecommendation = ({ navigation, route }: ComponentProps) => {
-  const [mealRecs, setMealRecs] = useState<Array<Array<string>>>([]);
+  const [mealRecs, setMealRecs] = useState<Array<Array<MealRecObject>>>([]);
   const [loading, setLoading] = useState(false);
   const globalContext = useContext(GlobalContext);
 
@@ -38,7 +39,11 @@ const MealRecommendation = ({ navigation, route }: ComponentProps) => {
 
   useEffect(() => {
     setLoading(globalContext.mealRecState.fetchingRecs);
-    setMealRecs(globalContext.mealRecState.mealRecommendationMatrix);
+    if (globalContext.mealRecState.fetchingRecs) {
+      setMealRecs([]);
+    } else {
+      setMealRecs(globalContext.mealRecState.mealRecommendationMatrix);
+    }
   }, [globalContext.mealRecState]);
 
   useEffect(() => {
@@ -60,12 +65,12 @@ const MealRecommendation = ({ navigation, route }: ComponentProps) => {
 
   return (
     <View style={{ height: '100%' }}>
-      <View style={{ padding: 15 }}>
+      <View style={{ padding: 15}}>
         <Text>Hi, {globalContext.userInfo.userName}</Text>
         <Text>
-          You have
-          {Math.round(MRS.getDailyCalorieGoal(globalContext))}-{' '}
-          {Math.round(MRS.calculateCurrCalories(globalContext))}={' '}
+          You have{' '}
+          {Math.round(MRS.getDailyCalorieGoal(globalContext))}{' '}-{' '}
+          {Math.round(MRS.calculateCurrCalories(globalContext))}{' '}={' '}
           {Math.round(
             MRS.getDailyCalorieGoal(globalContext) -
               MRS.calculateCurrCalories(globalContext)
@@ -93,29 +98,7 @@ const MealRecommendation = ({ navigation, route }: ComponentProps) => {
         {mealRecs.map((meal, mealIndex) => {
           return (
             <View key={mealIndex}>
-              <>
-                <Text style={{ fontSize: 20, fontWeight: '600' }}>{`Meal #${
-                  mealIndex + 1
-                }`}</Text>
-                <View>
-                  <Border />
-                  <Text
-                    style={{ fontSize: 16, fontWeight: '400' }}
-                  >{`Option #1`}</Text>
-                  <Text style={{ marginBottom: 10 }}>{meal[0]}</Text>
-                  <Border />
-                  <Text
-                    style={{ fontSize: 16, fontWeight: '400' }}
-                  >{`Option #2`}</Text>
-                  <Text style={{ marginBottom: 10 }}>{meal[1]}</Text>
-                  <Border />
-                  <Text
-                    style={{ fontSize: 16, fontWeight: '400' }}
-                  >{`Option #3`}</Text>
-                  <Text style={{ marginBottom: 10 }}>{meal[2]}</Text>
-                </View>
-              </>
-              <Border />
+              <MealRec mealIndex={mealIndex} mealRecOptions={meal}/>
             </View>
           );
         })}

@@ -1,7 +1,7 @@
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import FoodItemRow, { FoodItem, FoodItemType } from './FoodItem';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../screens/TabOneScreen';
+import { RootStackParamList } from '../types';
 
 type ComponentProps = {
   foodItemList: Array<FoodItem>;
@@ -26,9 +26,9 @@ const MyFoodList = (props: ComponentProps) => {
           return (
             <View key={index}>
               <FoodItemRow
-                        foodItem={foodItem}
-                        itemType={itemType}
-                        navigation={navigation}
+                  foodItem={foodItem}
+                  itemType={itemType}
+                  navigation={navigation}
               />
               <View
                 style={{

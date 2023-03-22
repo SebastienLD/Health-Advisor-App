@@ -42,34 +42,34 @@ const TabOneScreen = ({ navigation, route }: ComponentProps) => {
         payload: userInfo,
       });
 
-      // then start making recommendations
-      if (!globalContext.mealRecState.fetchingRecs) {
-        globalContext.mealRecDispatch({
-          type: MealRecActionTypes.UpdateMealRecMatrix,
-          payload: {
-            ...globalContext.mealRecState,
-            fetchingRecs: true,
-          },
-        });
-        const mealRecs = await MRS.generateMealRecommendations(globalContext);
-        globalContext.mealRecDispatch({
-          type: MealRecActionTypes.UpdateMealRecMatrix,
-          payload: {
-            mealRecommendationMatrix: mealRecs,
-            fetchingRecs: false,
-          },
-        });
-      }
+      // // then start making recommendations
+      // if (!globalContext.mealRecState.fetchingRecs) {
+      //   globalContext.mealRecDispatch({
+      //     type: MealRecActionTypes.UpdateMealRecMatrix,
+      //     payload: {
+      //       ...globalContext.mealRecState,
+      //       fetchingRecs: true,
+      //     },
+      //   });
+      //   const mealRecs = await MRS.generateMealRecommendations(globalContext);
+      //   globalContext.mealRecDispatch({
+      //     type: MealRecActionTypes.UpdateMealRecMatrix,
+      //     payload: {
+      //       mealRecommendationMatrix: mealRecs,
+      //       fetchingRecs: false,
+      //     },
+      //   });
+      // }
 
     } else {
       navigation.navigate('ProfilePageScreen');
     }
   };
 
-  //update our food items every time we navigate to this screen
-  navigation.addListener('focus', async () => {
-    fillFoodContext();
-  });
+  // //update our food items every time we navigate to this screen
+  // navigation.addListener('focus', async () => {
+  //   fillFoodContext();
+  // });
 
   useEffect(() => {
     fillFoodContext();

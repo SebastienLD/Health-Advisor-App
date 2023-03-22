@@ -1,6 +1,7 @@
+import { MealRecObject } from '../services/MealRecommendationService';
 import { GlobalContextType, MealRecState } from './globalContext';
 
-export type MealRecommendationMatrix = Array<Array<string>>;
+export type MealRecommendationMatrix = Array<Array<MealRecObject>>;
 
 export enum MealRecActionTypes {
   UpdateMealRecMatrix = 'UPDATE_MEAL_REC_MX',

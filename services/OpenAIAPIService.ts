@@ -29,6 +29,7 @@ const OpenAIAPIService = {
     gptMessage += `
         Please give me a response in the following format, filling in the {}:
 
+        Recipe Name: {},
         Calories: {},
         Nutrients:
           - Protein: {},
@@ -37,6 +38,7 @@ const OpenAIAPIService = {
         Dietery Preferences:
           - Lactose Free: {},
           - Gluten Free: {},
+          - Dairy Free: {},
           - Vegetarian: {},
           - Kosher: {},
           - Keto: {},

@@ -4,6 +4,46 @@ import { BiologicalSex } from '../models/UserInfo';
 import { HealthGoal } from '../models/UserInfo';
 import OpenAIAPIService from '../services/OpenAIAPIService';
 
+export interface MealRecObject {
+  recipeName: string;
+  calories: string;
+  protein: string;
+  carbs: string;
+  fats: string;
+
+  isLactoseIntolerant: string;
+  isGlutenFree: string;
+  isVeg: string;
+  isKosher: string;
+  isKeto: string;
+  hasDiabetes: string;
+  isDairyFree: string;
+  isLowCarb: string;
+
+  recipeIngredients: string;
+  recipeInstructions: string;
+}
+
+const RESP_FIELD_CONVERTER: Array<Array<string>> = [
+  ['Recipe Name', 'recipeName'],
+  ['Calories', 'calories'],
+  ['Protein', 'protein'],
+  ['Carbohydrates', 'carbs'],
+  ['Fats', 'fats'],
+  ['Lactose Free', 'isLactoseIntolerant'],
+  ['Gluten Free', 'isGlutenFree'],
+  ['Dairy Free', 'isDairyFree'],
+  ['Vegetarian', 'isVeg'],
+  ['Kosher', 'isKosher'],
+  ['Keto', 'isKeto'],
+  ['Good for diabetes', 'hasDiabetes'],
+  ['Low carbohydrates', 'isLowCarb'],
+  ['Recipe Ingredients', 'recipeIngredients'],
+  ['Recipe Instructions', 'recipeInstructions'],
+];
+
+let mealRecObject = { test: 'blah', test2: 'blah' };
+
 const getFieldResponse = (field: string, response: string): string => {
   const fieldIndex = response.indexOf(field);
   const endIndex = response.indexOf(',', fieldIndex);
@@ -49,54 +89,49 @@ const MRS = {
     const dietPreferences = globalContext.userInfo.dietPreferences;
     return dietPreferences;
   },
-  scoreMealRecommendation: (globalContext: GlobalContextType, mealRec: string): number => {
+  scoreMealRecommendation: (
+    globalContext: GlobalContextType,
+    mealRec: MealRecObject
+  ): number => {
     const dietPreferences = MRS.getUserDietPreferences(globalContext);
     let score = 0;
     if (dietPreferences.isLactoseIntolerant) {
-      const lactoseFree = getFieldResponse('Lactose Free', mealRec);
-      if (lactoseFree == 'Yes') {
+      if (mealRec.isLactoseIntolerant == 'Yes') {
         score += 1;
       }
     }
     if (dietPreferences.isGlutenFree) {
-      const glutenFree = getFieldResponse('Gluten Free', mealRec);
-      if (glutenFree == 'Yes') {
+      if (mealRec.isGlutenFree == 'Yes') {
         score += 1;
       }
     }
     if (dietPreferences.isVeg) {
-      const vegetarian = getFieldResponse('Vegetarian', mealRec);
-      if (vegetarian == 'Yes') {
+      if (mealRec.isVeg == 'Yes') {
         score += 1;
       }
     }
     if (dietPreferences.isKosher) {
-      const kosher = getFieldResponse('Kosher', mealRec);
-      if (kosher == 'Yes') {
+      if (mealRec.isKosher == 'Yes') {
         score += 1;
       }
     }
     if (dietPreferences.isKeto) {
-      const keto = getFieldResponse('Keto', mealRec);
-      if (keto == 'Yes') {
+      if (mealRec.isKeto == 'Yes') {
         score += 1;
       }
     }
     if (dietPreferences.hasDiabetes) {
-      const diabetic = getFieldResponse('Good for diabetes', mealRec);
-      if (diabetic == 'Yes') {
+      if (mealRec.hasDiabetes == 'Yes') {
         score += 1;
       }
     }
     if (dietPreferences.isDairyFree) {
-      const dairyFree = getFieldResponse('Dairy Free', mealRec);
-      if (dairyFree == 'Yes') {
+      if (mealRec.isDairyFree == 'Yes') {
         score += 1;
       }
     }
     if (dietPreferences.isLowCarb) {
-      const lowCarb = getFieldResponse('Low Carb', mealRec);
-      if (lowCarb == 'Yes') {
+      if (mealRec.isLowCarb == 'Yes') {
         score += 1;
       }
     }
@@ -106,30 +141,33 @@ const MRS = {
   generateMealRecommendations: async (
     globalContext: GlobalContextType
   ): Promise<MealRecommendationMatrix> => {
+    console.log(
+      '--------------------- GENERATING MEAL RECS ---------------------'
+    );
     const calorieGoal = MRS.getDailyCalorieGoal(globalContext);
     const calsPerMeal = calorieGoal / globalContext.userInfo.targetMealsPerDay;
     const currEatenCalories = MRS.calculateCurrCalories(globalContext);
     let caloriesLeft = calorieGoal - currEatenCalories;
 
-    const allMealRecOptions: Array<Array<string>> = [];
+    const allMealRecOptions: Array<Array<MealRecObject>> = [];
     while (caloriesLeft > 0) {
       let mealCals = caloriesLeft;
       if (caloriesLeft > calsPerMeal) {
         mealCals = calsPerMeal;
       }
 
-      const mealOptionPromises: Array<Promise<string>> = [];
+      const parsedMealOptionPromises: Array<Promise<MealRecObject>> = [];
       for (let i = 0; i < 5; i++) {
-        mealOptionPromises.push(
-          OpenAIAPIService.getMealRecipe(
+        parsedMealOptionPromises.push(
+          MRS.getParsedMealRecObject(
             mealCals,
             globalContext.userInfo.healthGoal
           )
         );
       }
-      const mealOptions = await Promise.all(mealOptionPromises);
+      const parsedMealOptions = await Promise.all(parsedMealOptionPromises);
       caloriesLeft -= mealCals;
-      allMealRecOptions.push(mealOptions);
+      allMealRecOptions.push(parsedMealOptions);
     }
 
     allMealRecOptions.forEach((mealOptions) => {
@@ -140,8 +178,23 @@ const MRS = {
       });
     });
 
-    console.log(allMealRecOptions)
+    console.log(allMealRecOptions);
     return allMealRecOptions;
+  },
+  getParsedMealRecObject: async (
+    calories: number,
+    healthGoal: HealthGoal
+  ): Promise<MealRecObject> => {
+    const mealRec = await OpenAIAPIService.getMealRecipe(calories, healthGoal);
+    let parsedMealRecObject = {};
+    RESP_FIELD_CONVERTER.forEach(([msg_key, obj_key]) => {
+      const fieldVal = getFieldResponse(msg_key, mealRec);
+      parsedMealRecObject = {
+        ...parsedMealRecObject,
+        [obj_key]: fieldVal,
+      };
+    });
+    return parsedMealRecObject as MealRecObject;
   },
 };
 
