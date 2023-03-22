@@ -5,11 +5,11 @@ Mobile Application for our CS 125 Project.
 Here are some screenshots of our app!
 
 <div>
-  <img src="mainFoodItemsPage.png" width="48">
-  <img src="profilePage.png" width="48">
-  <img src="barcodeScannerPage.png" width="48">
-  <img src="recommendationsPage.png" width="48">
-  <img src="preferencesPage.png" width="48">
+  <img src="mainFoodItemsPage.png" width="120">
+  <img src="profilePage.png" width="120">
+  <img src="barcodeScannerPage.png" width="120">
+  <img src="recommendationsPage.png" width="120">
+  <img src="preferencesPage.png" width="120">
 </div>
 
 Local Dev Steps:
