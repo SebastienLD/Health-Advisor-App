@@ -2,6 +2,16 @@
 
 Mobile Application for our CS 125 Project.
 
+Here are some screenshots of our app!
+
+<div>
+  <img src="mainFoodItemsPage.png" width="185">
+  <img src="profilePage.png" width="185">
+  <img src="barcodeScannerPage.png" width="185">
+  <img src="recommendationsPage.png" width="185">
+  <img src="preferencesPage.png" width="185">
+</div>
+
 Local Dev Steps:
 
 1. Clone repo
