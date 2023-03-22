@@ -9,6 +9,13 @@ Here are some screenshots of our app!
 ![Screenshot](recommendationsPage.png)
 ![Screenshot](preferencesPage.png)
 
+<div>
+  <img src="mainFoodItemsPage.png" width="48">
+  <img src="profilePage.png" width="48">
+  <img src="barcodeScannerPage.png" width="48">
+  <img src="recommendationsPage.png" width="48">
+  <img src="preferencesPage.png" width="48">
+</div>
 
 Local Dev Steps:
 
