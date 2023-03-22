@@ -2,6 +2,14 @@
 
 Mobile Application for our CS 125 Project.
 
+Here are some screenshots of our app!
+![Screenshot](mainFoodItemsPage.png)
+![Screenshot](profilePage.png)
+![Screenshot](barcodeScannerPage.png)
+![Screenshot](recommendationsPage.png)
+![Screenshot](preferencesPage.png)
+
+
 Local Dev Steps:
 
 1. Clone repo
